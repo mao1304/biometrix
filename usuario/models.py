@@ -18,3 +18,7 @@ class Profesor(models.Model):
 
     def __str__(self):
         return self.usuario
+    
+class faltas(models.Model):
+    fecha = models.DateTimeField()
+    ID_profesor = models.ForeignKey(Profesor, on_delete = models.DO_NOTHING)

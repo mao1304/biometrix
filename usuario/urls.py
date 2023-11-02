@@ -12,3 +12,4 @@ urlpatterns = [
     path('profesor/',include(router.urls)),
     
 ]
+  

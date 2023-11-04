@@ -1,5 +1,5 @@
 from django.db import models
-from usuario.models import Profesor
+from usuario.models import NormalUser
 
 class Programa(models.Model):
     idprograma = models.IntegerField(primary_key=True)
@@ -25,5 +25,5 @@ class Clase(models.Model):
     curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING)
     aula = models.ForeignKey(Aula, on_delete=models.DO_NOTHING)
     tema = models.CharField(max_length=45)
-    profesor_ID = models.ForeignKey(Profesor, on_delete=models.DO_NOTHING)
+    profesor_ID = models.ForeignKey(NormalUser, on_delete=models.DO_NOTHING)
 

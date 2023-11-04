@@ -1,13 +1,13 @@
 from rest_framework import serializers
-from .models import Usuadm, Profesor
+from .models import AdminUser, NormalUser
 
 
 class adminserializer(serializers.ModelSerializer):
     class Meta:
-        model = Usuadm
+        model = AdminUser
         fields= '__all__'
         
 class profesorserializer(serializers.ModelSerializer):
     class Meta:
-        model = Profesor
+        model = NormalUser
         fields= '__all__'

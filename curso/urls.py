@@ -3,16 +3,20 @@ from rest_framework import routers
 from curso import views
 
 
-router1 = routers.DefaultRouter()
+router_clase = routers.DefaultRouter()
+router_clase.register(r'clase', views.claseView, 'clase')
+
+router_aula = routers.DefaultRouter()
+router_aula.register(r'aula', views.aulaView, 'aula')
+
 router = routers.DefaultRouter()
-router1.register(r'clase', views.claseView, 'clase')
-router.register(r'aula', views.aulaView, 'aula')
+router = routers.DefaultRouter()
+
 router.register(r'programa', views.programaView, 'programa')
 router.register(r'curso', views.cursoView, 'curso')
 
 urlpatterns = [
-    path('clase/',include((router1.urls))),
-    path('aula/',include(router.urls)),
+    path('clase/',include((router_clase.urls))),
+    path('aula/',include(router_aula.urls)),
  
 ]
-  

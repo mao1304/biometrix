@@ -134,7 +134,7 @@ STATIC_URL = 'static/'
 
 CORS_ALLOWED_ORIGINS = [
     #va la direccion del servidor de react native el cual hace las solicitudes 
-    "https://localhost:2555"
+    'exp://10.13.89.19:8081'
 ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

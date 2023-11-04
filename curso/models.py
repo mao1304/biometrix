@@ -1,5 +1,6 @@
 from django.db import models
 from usuario.models import Profesor
+
 class Programa(models.Model):
     idprograma = models.IntegerField(primary_key=True)
     info_programa = models.TextField()

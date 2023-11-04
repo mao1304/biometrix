@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Usuadm, Profesor
+from .models import Usuadm, Profesor, faltas
 
 @admin.register(Usuadm)
 class UsuadmAdmin(admin.ModelAdmin):
@@ -8,3 +8,8 @@ class UsuadmAdmin(admin.ModelAdmin):
 @admin.register(Profesor)
 class ProfesorAdmin(admin.ModelAdmin):
     pass
+
+@admin.register(faltas)
+class faltasAdmin(admin.ModelAdmin):
+    pass
+

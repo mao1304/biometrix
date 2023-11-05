@@ -136,5 +136,5 @@ CORS_ALLOWED_ORIGINS = [
     #va la direccion del servidor de react native el cual hace las solicitudes 
     'exp://10.13.89.19:8081'
 ]
-
+AUTH_USER_MODEL = 'usuario.NewUser'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

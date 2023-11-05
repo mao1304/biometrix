@@ -1,7 +1,6 @@
 from django.contrib import admin
-from .models import AdminUser, NormalUser, faltas
-from .models import NormalUser
-from .forms import NormalUserForm, AdminUserForm
+from .models import  NewUser, faltas
+from .forms import NewUserForm, AdminUserForm
 from django.contrib.auth.admin import UserAdmin
 
 
@@ -10,27 +9,15 @@ class faltasAdmin(admin.ModelAdmin):
     pass
 
 
-
-class NormalUserAdmin(UserAdmin):
-    add_form = NormalUserForm
+class NewUserAdmin(UserAdmin):
+    add_form = NewUserForm
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields':('user', 'password', 'first_name', 'last_name','huella', 'is_staff'),
+            'fields':('username', 'password', 'first_name', 'last_name','huella', 'is_staff'),
 
         }),
     )
 
-admin.site.register(NormalUser, NormalUserAdmin)
+admin.site.register(NewUser, NewUserAdmin)
 
-class AdminUserAdmin(UserAdmin):
-    add_form = AdminUserForm
-    add_fieldsets = (
-        (None, {
-            'classes': ('wide',),
-            'fields':('user', 'password', 'is_staff'),
-
-        }),
-    )
-
-admin.site.register(AdminUser, NormalUserAdmin)

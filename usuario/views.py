@@ -1,49 +1,84 @@
 from rest_framework import viewsets
-from .serializer import adminserializer, profesorserializer
-from .models import AdminUser, NormalUser
-from django.shortcuts import render, redirect, get_object_or_404
+from .serializer import  profesorserializer
+from .models import  NewUser
+from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
-from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.db import IntegrityError
 from django.urls import reverse
-from .forms import NormalUserForm
+from .forms import AdminUserForm, NewUserForm, LoginAdminForm, LoginUserForm
 
-#retorna todos los registros de admin como json
-class adminView(viewsets.ModelViewSet):
-    serializer_class = adminserializer
-    queryset = AdminUser.objects.all()
 
-#retorna todos los registros de profesor como json  
+
+
+#retorna todos los registros de usuarios como json  
 class profView(viewsets.ModelViewSet):
     serializer_class = profesorserializer
-    queryset = NormalUser.objects.all()
+    queryset = NewUser.objects.all()
     
-def test(request):
-    return render(request,'forms.html', {"form": NormalUserForm})
-
-def signupAdmin(request):
+#registro de un nuevo admnistrador e inicio de sesion del mismo
+def loginAdmin(request):
     if request.method == 'GET':
-        return render(request, {"form": UserCreationForm})
+        return render(request, 'forms.html', {"form": AdminUserForm})
+
     elif request.method == 'POST':
-            try:
-                user = User.objects.create_user(
-                    request.POST["username"], password=request.POST["password1"])
-                user.save()
-                login(request, user)
-                return redirect(reverse('mainPage'))  
-            except IntegrityError:
-                return render(request, 'signup.html', {"form": UserCreationForm, "error": "Username already exists."})
+        try:
+            username = request.POST["username"]
+            password = request.POST["password"]
+            admin_check = request.POST.get("admin_check", False) == "on"
 
-def signin(request):
+            user = NewUser.objects.create_user(
+                username=username,
+                password=password,
+                admin_check=admin_check,
+            )
+
+            authenticated_user = authenticate(request, username=username, password=password)
+            login(request, authenticated_user)
+            user.save()
+            return redirect(reverse('home'))
+
+        except IntegrityError:
+            return render(request, 'signup.html', {"form": AdminUserForm, "error": "Username already exists."})
+    
+def home_view(request):
+    return render(request, 'home.html')
+
+def signInUser(request):
     if request.method == 'GET':
-        return render(request, 'signin.html', {"form": AuthenticationForm})
+        return render(request, 'forms.html', {"form": NewUserForm})
+
+    elif request.method == 'POST':
+        try:
+            username = request.POST["username"]
+            password = request.POST["password"]
+            first_name = request.POST["first_name"]
+            last_name = request.POST["last_name"]
+            huella = request.POST["huella"]
+            admin_check = request.POST.get("admin_check", False) == "on"
+
+            user = NewUser.objects.create_user(
+                username=username,
+                password=password,
+                first_name=first_name,
+                last_name=last_name,
+                huella=huella,
+                admin_check=admin_check,
+            )
+
+            user.save()
+            print("User saved")
+
+        except IntegrityError:
+            return render(request, 'signup.html', {"form": AdminUserForm, "error": "Username already exists."})
+        
+def loginUser(request):
+    if request.method == 'GET':
+        return render(request, 'registrer.html', {"form": LoginUserForm})
+
     else:
         user = authenticate(
             request, username=request.POST['username'], password=request.POST['password'])
         if user is None:
-            return render(request, 'signin.html', {"form": AuthenticationForm, "error": "Username or password is incorrect."})
-
+            return render(request, 'signin.html', {"form": LoginUserForm, "error": "Username or password is incorrect."})
         login(request, user)
-        return redirect('mainPage')
+        return redirect('home')

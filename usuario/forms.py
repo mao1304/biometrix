@@ -1,12 +1,23 @@
 from django import forms
-from .models import NormalUser, AdminUser
+from .models import NewUser
 
-class NormalUserForm(forms.ModelForm):
+class NewUserForm(forms.ModelForm):
     class Meta:
-        model = NormalUser
-        fields = {'user', 'password', 'first_name', 'last_name','huella', 'is_staff',}
-
+        model = NewUser
+        fields = {'username', 'password', 'first_name', 'last_name','huella', 'admin_check',}
+        
+class LoginUserForm(forms.ModelForm):
+    class Meta:
+        model = NewUser
+        fields = {'username', 'password',}
+        
+class LoginAdminForm(forms.ModelForm):
+    class Meta:
+        model = NewUser
+        fields = {'username', 'password',}
+        
 class AdminUserForm(forms.ModelForm):
     class Meta:
-        model = AdminUser
-        fields = {'username', 'password', 'is_staff',}  
+        model = NewUser
+        fields = {'username', 'password', 'admin_check',}  
+ 

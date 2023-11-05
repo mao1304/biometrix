@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.db import IntegrityError
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 from .forms import AdminUserForm, NewUserForm, LoginAdminForm, LoginUserForm
 
 
@@ -16,9 +17,9 @@ class profView(viewsets.ModelViewSet):
     queryset = NewUser.objects.all()
     
 #registro de un nuevo admnistrador e inicio de sesion del mismo
-def loginAdmin(request):
+def signUpAdmin(request):
     if request.method == 'GET':
-        return render(request, 'forms.html', {"form": AdminUserForm})
+        return render(request, 'registrer.html', {"form": AdminUserForm})
 
     elif request.method == 'POST':
         try:
@@ -39,11 +40,11 @@ def loginAdmin(request):
 
         except IntegrityError:
             return render(request, 'signup.html', {"form": AdminUserForm, "error": "Username already exists."})
-    
+@login_required  
 def home_view(request):
     return render(request, 'home.html')
 
-def signInUser(request):
+def signUpUser(request):
     if request.method == 'GET':
         return render(request, 'forms.html', {"form": NewUserForm})
 
@@ -71,7 +72,7 @@ def signInUser(request):
         except IntegrityError:
             return render(request, 'signup.html', {"form": AdminUserForm, "error": "Username already exists."})
         
-def loginUser(request):
+def SignIn(request):
     if request.method == 'GET':
         return render(request, 'registrer.html', {"form": LoginUserForm})
 
@@ -82,3 +83,4 @@ def loginUser(request):
             return render(request, 'signin.html', {"form": LoginUserForm, "error": "Username or password is incorrect."})
         login(request, user)
         return redirect('home')
+    

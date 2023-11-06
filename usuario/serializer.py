@@ -4,7 +4,7 @@ from .models import NewUser
 
 
      
-class profesorserializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = NewUser
         fields= '__all__'

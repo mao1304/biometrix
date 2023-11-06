@@ -14,7 +14,7 @@ from usuario import views
 
 
 router_user = routers.DefaultRouter()
-router_user.register(r'usuarioP', views.profView, 'prof')
+router_user.register(r'usuarioP', views.UserView, 'prof')
 
 
 

@@ -17,12 +17,11 @@
 <!-- Segundo formulario oculto para signUpAdmin -->
 <form id="crearAdminFormulario" action="{% url 'signUpAdmin' %}" method="POST" style="display: none;">
   {% csrf_token %}
-  <!-- Campos y contenido del formulario signUpAdmin -->
-  <input type="text" name="campo1" />
-  <input type="text" name="campo2" />
+  {{ form.as_p }}
   <button type="submit">Crear Administrador</button>
 </form>
 
+{% block script %}
 <script>
   // Obtener referencias a los formularios
   const formLogin = document.getElementById('miFormulario');
@@ -33,14 +32,15 @@
   formCrearAdmin.style.display = 'none';
 
   // Agregar evento al enlace "Inicio de Sesión"
-  document.querySelector('nav a[href="#"]').addEventListener('click', function() {
+  document.querySelector('nav a[href="{% url 'loginUser' %}"]').addEventListener('click', function() {
     formLogin.style.display = 'block';
     formCrearAdmin.style.display = 'none';
   });
 
   // Agregar evento al enlace "Crear Administrador"
-  document.querySelector('nav a[href="#signUpAdmin"]').addEventListener('click', function() {
+  document.querySelector('nav a[href="{% url 'signUpAdmin' %}"]').addEventListener('click', function() {
     formLogin.style.display = 'none';
     formCrearAdmin.style.display = 'block';
   });
 </script>
+{% endblock %}

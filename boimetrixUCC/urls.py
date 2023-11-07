@@ -20,6 +20,6 @@ from usuario import urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',include('usuario.urls')),
+    path('users/',include('usuario.urls')),
     path('curso/',include('curso.urls')),
 ]

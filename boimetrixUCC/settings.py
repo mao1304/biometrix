@@ -46,7 +46,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    "corsheaders.middleware.CorsMiddleware",
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -133,8 +133,8 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 CORS_ALLOWED_ORIGINS = [
-    #va la direccion del servidor de react native el cual hace las solicitudes 
-    'exp://10.13.89.19:8081'
+
+    "http://localhost:8000",
 ]
 AUTH_USER_MODEL = 'usuario.NewUser'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

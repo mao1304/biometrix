@@ -1,38 +1,47 @@
-from rest_framework import viewsets
-from .serializer import  UserSerializer
-from .models import  NewUser
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import login, authenticate
 from django.db import IntegrityError
 from django.urls import reverse
-from django.contrib.auth.decorators import login_required
-from .forms import AdminUserForm, NewUserForm, LoginUserForm
-from django.core.exceptions import SuspiciousOperation
 from django.http import JsonResponse
-from django.shortcuts import render, redirect
-from django.urls import reverse
 from django.views import View
-from django.contrib.auth import authenticate, login
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from django.db import IntegrityError
-from rest_framework import viewsets
-from .forms import AdminUserForm
-from .models import NewUser
+from django.core.exceptions import SuspiciousOperation
+from django.contrib.auth.decorators import login_required
 
+from rest_framework import viewsets, status, permissions
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from .serializer import UserSerializer,AdminSerializer
+from .models import NewUser
+from .forms import AdminUserForm, NewUserForm, LoginUserForm
+from .utils import is_admin
 
 #retorna todos los registros de usuarios como json  
+
+class ReadOnlyUserPermission(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.method in ['GET', 'PUT', 'PATCH', 'DELETE']
+    
 class UserView(viewsets.ModelViewSet):
     serializer_class = UserSerializer
-    queryset = NewUser.objects.all()
-    
-#registro de un nuevo admnistrador e inicio de sesion del mismo
-def signUpAdmin(request):
-    if request.method == 'GET':
-        return render(request, 'registrer.html', {"form": AdminUserForm})
+    def get_queryset(self):
+        # Filtra la consulta para mostrar solo los usuarios con admin_check en True
+        return NewUser.objects.filter(admin_check=False)  
+    permission_classes = [ReadOnlyUserPermission]
 
-    elif request.method == 'POST':
-        form = AdminUserForm(request.POST)
+class AdminView(viewsets.ModelViewSet):
+    serializer_class = AdminSerializer
+    def get_queryset(self):
+        # Filtra la consulta para mostrar solo los usuarios con admin_check en True
+        return NewUser.objects.filter(admin_check=True)  
+    permission_classes = [ReadOnlyUserPermission]
+
+@method_decorator(csrf_exempt, name='dispatch')
+class SignUpAdminAPI(APIView):
+    def post(self, request, format=None):
+        print("Entrando a la vista SignUpAdminAPI")
+        form = AdminUserForm(request.data)
         if form.is_valid():
             try:
                 username = form.cleaned_data['username']
@@ -48,21 +57,24 @@ def signUpAdmin(request):
                 authenticated_user = authenticate(request, username=username, password=password)
                 login(request, authenticated_user)
 
-                return redirect(reverse('home'))
-
-            except IntegrityError:
-                return render(request, 'registrer.html', {"form": AdminUserForm, "error": "Username already exists."})
-            
+                response = Response({'message': 'Registro exitoso'}, status=status.HTTP_201_CREATED)
+                response["Access-Control-Allow-Origin"] = "http://127.0.0.1:8000"
+                return response
+            except IntegrityError as e:
+                print(f"Error de integridad: {e}")
+                return Response({'error': 'Datos no válidos'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            print("Formulario no válido")
+            print("Datos del formulario:", request.data)
+            return Response({'error': 'Datos no válidos'}, status=status.HTTP_400_BAD_REQUEST)
+        
+@method_decorator(csrf_exempt, name='dispatch')
+@method_decorator(is_admin, name='dispatch')
 @login_required  
-def home_view(request):
-    return render(request, 'home.html')
-
-def signUpUser(request):
-    if request.method == 'GET':
-        return render(request, 'forms.html', {"form": NewUserForm})
-
-    elif request.method == 'POST':
-        form = NewUserForm(request.POST)
+class SignUpUserAPI(APIView):
+    def post(self, request, format=None):
+        print("Entrando a la vista SignUpUserAPI")
+        form = NewUserForm(request.data)
         if form.is_valid():
             try:
                 username = form.cleaned_data['username']
@@ -82,11 +94,23 @@ def signUpUser(request):
                 )
 
                 user.save()
-                print("User saved")
 
-            except IntegrityError:
-                return render(request, 'signup.html', {"form": AdminUserForm, "error": "Username already exists."})
-    
+                response = Response({'message': 'Registro exitoso'}, status=status.HTTP_201_CREATED)
+                response["Access-Control-Allow-Origin"] = "http://127.0.0.1:8000"
+                return response
+            except IntegrityError as e:
+                print(f"Error de integridad: {e}")
+                return Response({'error': 'Datos no válidos'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            print("Formulario no válido")
+            print("Datos del formulario:", request.data)
+            return Response({'error': 'Datos no válidos'}, status=status.HTTP_400_BAD_REQUEST)
+        
+@login_required  
+def home_view(request):
+    return render(request, 'home.html')
+
+   
 def SignIn(request):
     if request.method == 'GET':
         return render(request, 'registrer.html', {"form": LoginUserForm})

@@ -2,28 +2,18 @@ from django.urls import path,include
 from rest_framework import routers
 from usuario import views
 
+router_Prof = routers.DefaultRouter()
+router_Prof.register(r'usuarioP', views.UserView, 'prof')
 
-router_user = routers.DefaultRouter()
-router_user.register(r'usuarioP', views.profView, 'prof')
-
-
-
-from django.urls import path,include
-from rest_framework import routers
-from usuario import views
-
-
-router_user = routers.DefaultRouter()
-router_user.register(r'usuarioP', views.UserView, 'prof')
-
-
+router_admin = routers.DefaultRouter()
+router_admin.register(r'usuarioA', views.AdminView, 'admin')
 
 urlpatterns = [
-    path('', views.SignIn, name='loginUser'),
-    path('signUpAdmin/', views.signUpAdmin, name='signUpAdmin'),
-    path('signUpUser/', views.signUpUser, name='signUpUser'),
-    path('home/', views.home_view, name='home'), 
-    path('profesor/',include(router_user.urls)),
+
+    path('signUpAdmin/', views.SignUpAdminAPI.as_view(), name='signUpAdmin'),
+    path('SignUpUser/', views.SignUpUserAPI.as_view(), name='SignUpUser'),
+    path('ProfList/',include(router_Prof.urls)),
+    path('AdminList/',include(router_admin.urls)),
     
 ]
   

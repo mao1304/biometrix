@@ -13,6 +13,6 @@ class LoginUserForm(forms.ModelForm):
                 
 class AdminUserForm(forms.ModelForm):
     class Meta:
-        model = NewUser
+        model = NewUser 
         fields = {'username', 'password', 'admin_check',}  
  

@@ -9,14 +9,18 @@ from django.utils.decorators import method_decorator
 from django.core.exceptions import SuspiciousOperation
 from django.contrib.auth.decorators import login_required
 
+from rest_framework.renderers import JSONRenderer
 from rest_framework import viewsets, status, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializer import UserSerializer,AdminSerializer
 from .models import NewUser
 from .forms import AdminUserForm, NewUserForm, LoginUserForm
-from .utils import is_admin
 
+
+
+from rest_framework.decorators import permission_classes
+from rest_framework.permissions import IsAuthenticated
 #retorna todos los registros de usuarios como json  
 
 class ReadOnlyUserPermission(permissions.BasePermission):
@@ -26,14 +30,12 @@ class ReadOnlyUserPermission(permissions.BasePermission):
 class UserView(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     def get_queryset(self):
-        # Filtra la consulta para mostrar solo los usuarios con admin_check en True
         return NewUser.objects.filter(admin_check=False)  
     permission_classes = [ReadOnlyUserPermission]
 
 class AdminView(viewsets.ModelViewSet):
     serializer_class = AdminSerializer
     def get_queryset(self):
-        # Filtra la consulta para mostrar solo los usuarios con admin_check en True
         return NewUser.objects.filter(admin_check=True)  
     permission_classes = [ReadOnlyUserPermission]
 
@@ -69,8 +71,6 @@ class SignUpAdminAPI(APIView):
             return Response({'error': 'Datos no válidos'}, status=status.HTTP_400_BAD_REQUEST)
         
 @method_decorator(csrf_exempt, name='dispatch')
-@method_decorator(is_admin, name='dispatch')
-@login_required  
 class SignUpUserAPI(APIView):
     def post(self, request, format=None):
         print("Entrando a la vista SignUpUserAPI")

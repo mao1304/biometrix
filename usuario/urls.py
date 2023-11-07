@@ -1,6 +1,6 @@
 from django.urls import path,include
 from rest_framework import routers
-from usuario.views import SignUpUserAPI, SignUpAdminAPI, UserView,AdminView
+from usuario.views import SignUpUserAPI, SignUpAdminAPI, UserView,AdminView,SignInAPI
 
 router_Prof = routers.DefaultRouter()
 router_Prof.register(r'usuarioP', UserView, 'prof')
@@ -12,6 +12,7 @@ urlpatterns = [
 
     path('signUpAdmin/', SignUpAdminAPI.as_view(), name='signUpAdmin'),
     path('SignUpUser/', SignUpUserAPI.as_view(), name='SignUpUser'),
+    path('SignInAPI/', SignInAPI.as_view(), name='SignInAPI'),
     path('ProfList/',include(router_Prof.urls)),
     path('AdminList/',include(router_admin.urls)),
     

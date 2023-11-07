@@ -113,5 +113,33 @@ def home_view(request):
     return render(request, 'home.html')
 
    
+@method_decorator(csrf_exempt, name='dispatch')
+class SignInAPI(APIView):
+    def post(self, request, format=None):
+        print("Entrando a la vista SignInAPI")
+        form = LoginUserForm(request.data)
+        
+        if form.is_valid():
+            try:
+                username = form.cleaned_data['username']
+                password = form.cleaned_data['password']
 
+                if request.session.get('login_attempts', 0) >= 5:
+                    raise SuspiciousOperation("Número máximo de intentos de inicio de sesión alcanzado.")
+
+                user = authenticate(request, username=username, password=password)
+
+                if user is None:
+                    raise SuspiciousOperation("Usuario o contraseña incorrectos.")
+
+                request.session['login_attempts'] = 0
+                login(request, user)
+
+                return Response({'message': 'Inicio de sesión exitoso'}, status=status.HTTP_200_OK)
+
+            except SuspiciousOperation as e:
+                request.session['login_attempts'] = request.session.get('login_attempts', 0) + 1
+                return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({'error': 'Datos no válidos'}, status=status.HTTP_400_BAD_REQUEST)
     

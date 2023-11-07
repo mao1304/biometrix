@@ -74,6 +74,8 @@ class SignUpAdminAPI(APIView):
 class SignUpUserAPI(APIView):
     def post(self, request, format=None):
         print("Entrando a la vista SignUpUserAPI")
+        if request.user.admin_check == False:
+            return Response({'error': 'Acceso no autorizado'}, status=status.HTTP_401_UNAUTHORIZED)
         form = NewUserForm(request.data)
         if form.is_valid():
             try:
@@ -111,37 +113,5 @@ def home_view(request):
     return render(request, 'home.html')
 
    
-def SignIn(request):
-    if request.method == 'GET':
-        return render(request, 'registrer.html', {"form": LoginUserForm})
-    else:
-        username = request.POST['username']
-        password = request.POST['password']
-        
-        # Validación del número de intentos de inicio de sesión
-        if request.session.get('login_attempts', 0) >= 5:
-            raise SuspiciousOperation("Número máximo de intentos de inicio de sesión alcanzado.")
 
-        user = authenticate(request, username=username, password=password)
-        if user is None:
-            # Incrementar el contador de intentos de inicio de sesión
-            request.session['login_attempts'] = request.session.get('login_attempts', 0) + 1
-            return render(request, 'registrer.html', {"form": LoginUserForm, "error": "Username or password is incorrect."})
-
-        # Restablecer el contador de intentos de inicio de sesión exitoso
-        request.session['login_attempts'] = 0
-
-        login(request, user)
-        return redirect('home')
-
-    # if request.method == 'GET':
-    #     return render(request, 'registrer.html', {"form": LoginUserForm})
-
-    # else:
-    #     user = authenticate(
-    #         request, username=request.POST['username'], password=request.POST['password'])
-    #     if user is None:
-    #         return render(request, 'signin.html', {"form": LoginUserForm, "error": "Username or password is incorrect."})
-    #     login(request, user)
-    #     return redirect('home')
     

@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from django.db import IntegrityError
 from django.urls import reverse
 from django.http import JsonResponse
@@ -143,3 +143,10 @@ class SignInAPI(APIView):
 
         return Response({'error': 'Datos no válidos'}, status=status.HTTP_400_BAD_REQUEST)
     
+@method_decorator(login_required, name='dispatch')
+@method_decorator(csrf_exempt, name='dispatch')
+class SignOutAPI(APIView):
+    def post(self, request, format=None):
+        request.session.flush()
+        logout(request)
+        return Response({'message': 'Cierre de sesión exitoso'}, status=status.HTTP_200_OK)

@@ -8,12 +8,13 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.core.exceptions import SuspiciousOperation
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import AuthenticationForm
 
 from rest_framework.renderers import JSONRenderer
 from rest_framework import viewsets, status, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializer import UserSerializer,AdminSerializer
+from .serializer import UserSerializer,AdminSerializer, LoginSerializer
 from .models import NewUser
 from .forms import AdminUserForm, NewUserForm, LoginUserForm
 
@@ -74,8 +75,6 @@ class SignUpAdminAPI(APIView):
 class SignUpUserAPI(APIView):
     def post(self, request, format=None):
         print("Entrando a la vista SignUpUserAPI")
-        if request.user.admin_check == False:
-            return Response({'error': 'Acceso no autorizado'}, status=status.HTTP_401_UNAUTHORIZED)
         form = NewUserForm(request.data)
         if form.is_valid():
             try:
@@ -107,32 +106,29 @@ class SignUpUserAPI(APIView):
             print("Formulario no válido")
             print("Datos del formulario:", request.data)
             return Response({'error': 'Datos no válidos'}, status=status.HTTP_400_BAD_REQUEST)
-        
+
+
 @login_required  
 def home_view(request):
     return render(request, 'home.html')
 
    
 @method_decorator(csrf_exempt, name='dispatch')
+
 class SignInAPI(APIView):
     def post(self, request, format=None):
-        print("Entrando a la vista SignInAPI")
-        form = LoginUserForm(request.data)
-        
-        if form.is_valid():
-            try:
-                username = form.cleaned_data['username']
-                password = form.cleaned_data['password']
+        serializer = LoginSerializer(data=request.data)
 
-                if request.session.get('login_attempts', 0) >= 5:
-                    raise SuspiciousOperation("Número máximo de intentos de inicio de sesión alcanzado.")
+        if serializer.is_valid():
+            try:
+                username = serializer.validated_data['username']
+                password = serializer.validated_data['password']
 
                 user = authenticate(request, username=username, password=password)
 
                 if user is None:
                     raise SuspiciousOperation("Usuario o contraseña incorrectos.")
 
-                request.session['login_attempts'] = 0
                 login(request, user)
 
                 return Response({'message': 'Inicio de sesión exitoso'}, status=status.HTTP_200_OK)
@@ -140,11 +136,12 @@ class SignInAPI(APIView):
             except SuspiciousOperation as e:
                 request.session['login_attempts'] = request.session.get('login_attempts', 0) + 1
                 return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response({'error': 'Datos no válidos'}, status=status.HTTP_400_BAD_REQUEST)
-    
 @method_decorator(login_required, name='dispatch')
 @method_decorator(csrf_exempt, name='dispatch')
+
 class SignOutAPI(APIView):
     def post(self, request, format=None):
         request.session.flush()

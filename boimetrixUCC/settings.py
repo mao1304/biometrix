@@ -25,7 +25,10 @@ SECRET_KEY = 'django-insecure-n@j#ff7iki!-mi(mzf&w5sre&)w0jojbj7^_@9feyhnsszky%e
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+'biometrixuc.ddns.net',
+'127.0.0.1',
+]
 
 
 # Application definition
@@ -134,7 +137,12 @@ STATIC_URL = 'static/'
 
 CORS_ALLOWED_ORIGINS = [
 
-    "http://localhost:8000",
+    "exp://10.13.129.2:8081",
 ]
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
+
 AUTH_USER_MODEL = 'usuario.NewUser'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

@@ -10,3 +10,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = NewUser
         fields= ('username', 'password', 'first_name', 'last_name','huella', 'admin_check',) 
+        
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField()

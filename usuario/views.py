@@ -1,28 +1,28 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.db import IntegrityError
-from django.urls import reverse
-from django.http import JsonResponse
-from django.views import View
+
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.core.exceptions import SuspiciousOperation
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import AuthenticationForm
+from django.shortcuts import render
+from django.db import connection
 
-from rest_framework.renderers import JSONRenderer
 from rest_framework import viewsets, status, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializer import UserSerializer,AdminSerializer, LoginSerializer
 from .models import NewUser
-from .forms import AdminUserForm, NewUserForm, LoginUserForm
+from .forms import AdminUserForm, NewUserForm,LoginUserForm
 
 
+def consulta_mysql(request):
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT curso.ciclo as ciclo,clase.curso_id,programa.info_programa,curso.grupo, curso.descripcion, DATE_FORMAT(hora_inicio, '%H:%i') AS 'hora de inicio',DATE_FORMAT(hora_fin, '%H:%i') AS 'hora de fin', clase.tema, clase.aula_id as aula, curso.num_clases_rest as 'num clases vistas', aula.numero as Aula from curso_clase as clase inner join curso_curso as curso on clase.curso_id = curso.id_curso inner join curso_programa as programa on curso.programa_id = programa.idprograma inner join curso_aula as aula on aula.idaula = clase.aula_id;")
+        resultados = cursor.fetchall()
+    return render(request, 'home.html', {'resultados': resultados})
 
-from rest_framework.decorators import permission_classes
-from rest_framework.permissions import IsAuthenticated
-#retorna todos los registros de usuarios como json  
 
 class ReadOnlyUserPermission(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -108,14 +108,15 @@ class SignUpUserAPI(APIView):
             return Response({'error': 'Datos no válidos'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-@login_required  
 def home_view(request):
-    return render(request, 'home.html')
+    return render(request, 'registrer.html')
 
    
 @method_decorator(csrf_exempt, name='dispatch')
-
 class SignInAPI(APIView):
+    # def get(self, request, format=None):
+    #     form = LoginUserForm()  
+    #     return render(request, 'login_template.html', {'form': form})
     def post(self, request, format=None):
         serializer = LoginSerializer(data=request.data)
 
@@ -131,7 +132,7 @@ class SignInAPI(APIView):
 
                 login(request, user)
 
-                return Response({'message': 'Inicio de sesión exitoso'}, status=status.HTTP_200_OK)
+                return Response({'message': 'Inicio de sesión exitoso'}, status=status.HTTP_200_OK) 
 
             except SuspiciousOperation as e:
                 request.session['login_attempts'] = request.session.get('login_attempts', 0) + 1
@@ -147,3 +148,4 @@ class SignOutAPI(APIView):
         request.session.flush()
         logout(request)
         return Response({'message': 'Cierre de sesión exitoso'}, status=status.HTTP_200_OK)
+    

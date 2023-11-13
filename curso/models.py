@@ -26,4 +26,6 @@ class Clase(models.Model):
     aula = models.ForeignKey(Aula, on_delete=models.DO_NOTHING)
     tema = models.CharField(max_length=45)
     profesor_ID = models.ForeignKey(NewUser, on_delete=models.DO_NOTHING)
-
+    
+    def __str__(self):
+        return self.username

@@ -23,6 +23,7 @@ class NewUser(AbstractUser, PermissionsMixin):
 class faltas(models.Model):
     fecha = models.DateTimeField()
     ID_profesor = models.ForeignKey(NewUser, on_delete = models.DO_NOTHING)
+    
     def __str__(self):
         return self.ID_profesor
     

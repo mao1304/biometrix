@@ -26,8 +26,7 @@ SECRET_KEY = 'django-insecure-n@j#ff7iki!-mi(mzf&w5sre&)w0jojbj7^_@9feyhnsszky%e
 DEBUG = True
 
 ALLOWED_HOSTS = [
-'biometrixuc.ddns.net',
-'127.0.0.1',
+
 ]
 
 
@@ -137,8 +136,13 @@ STATIC_URL = 'static/'
 
 CORS_ALLOWED_ORIGINS = [
 
-    "exp://10.13.129.2:8081",
+    # "exp://10.13.129.2:8081",
+    # "exp://192.168.1.2:8081",
+    'https://44prmzjk-8000.use2.devtunnels.ms',
+    # "http://127.0.0.1:5500",
 ]
+
+CORS_ALLOW_ALL_ORIGINS = True
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',

@@ -1,1 +1,48 @@
-<a>home page</a>
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados de la Consulta</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+    <h1>Resultados de la Consulta</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Ciclo</th>
+                <th>Curso ID</th>
+                <th>Info Programa</th>
+                <th>Grupo</th>
+                <th>Descripción</th>
+                <th>Hora de Inicio</th>
+                <th>Hora de Fin</th>
+                <th>Tema</th>
+                <th>Aula</th>
+                <th>Número de Clases Vistas</th>
+                <th>Número de Aula</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for resultado in resultados %}
+                <tr>
+                    <td>{{ resultado.0 }}</td>
+                    <td>{{ resultado.1 }}</td>
+                    <td>{{ resultado.2 }}</td>
+                    <td>{{ resultado.3 }}</td>
+                    <td>{{ resultado.4 }}</td>
+                    <td>{{ resultado.5 }}</td>
+                    <td>{{ resultado.6 }}</td>
+                    <td>{{ resultado.7 }}</td>
+                    <td>{{ resultado.8 }}</td>
+                    <td>{{ resultado.9 }}</td>
+                    <td>{{ resultado.10 }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

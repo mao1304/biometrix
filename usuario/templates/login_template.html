@@ -1,16 +1,24 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sesión</title>
-</head>
-<body>
-    <h2>Iniciar Sesión</h2>
-    <form method="post" action="{% url 'SignInAPI' %}">
+{% extends 'base.html'%}
+
+{% block content %}
+
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'css/styleLogin.css' %}">
+
+  <div id="container">
+    <h1>Log In</h1>
+    <span class="close-btn">
+      <img src="{% static 'images/logo-biometrixUCC.png' %}" alt="Descripción de la imagen">
+    </span>
+
+    <form method="post" action="{% url 'login' %}">
         {% csrf_token %}
-        {{ form.as_p }}
+    
+        <input type="text" name="username" placeholder="Nombre de usuario">
+        <input type="password" name="password" placeholder="Password">
+    
         <button type="submit">Iniciar Sesión</button>
     </form>
-</body>
-</html>
+  </div>
+{% endblock %}

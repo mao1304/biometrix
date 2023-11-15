@@ -1,0 +1,55 @@
+<!-- En editar_programa.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Programa</title>
+</head>
+<body>
+
+    <h1>Editar Programa {{ idprogrma }}</h1>
+
+    <form id="formularioEditarPrograma">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Guardar Cambios</button>
+    </form>
+
+    <button type="button" id="botonCancelar">Cancelar</button>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            obtenerDetallesPrograma();
+
+            function obtenerDetallesPrograma() {
+                var urlParams = new URLSearchParams(window.location.search);             
+                var idPrograma = urlParams.get('idprograma');
+
+                if (idPrograma) {
+                    fetch('http://127.0.0.1:8000/curso/programa/programa/' + idPrograma)
+                        .then(response => response.json())
+                        .then(data => mostrarDetallesPrograma(data))
+                        .catch(error => console.error('Error:', error));
+                } else {
+                    console.error('No se encontró el ID del programa en la URL.');
+                }
+            }
+
+            function mostrarDetallesPrograma(programa) {
+                var formularioEditarPrograma = document.getElementById('formularioEditarPrograma');
+
+                formularioEditarPrograma.elements['info_programa'].value = programa.info_programa;
+                formularioEditarPrograma.elements['jefe_programa'].value = programa.jefe_programa;
+                formularioEditarPrograma.elements['facultad'].value = programa.facultad;
+            }
+
+            var botonCancelar = document.getElementById('botonCancelar');
+            botonCancelar.addEventListener('click', function() {
+                window.history.back();
+            });
+        });
+    </script>
+
+</body>
+</html>

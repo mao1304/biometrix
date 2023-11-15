@@ -1,0 +1,29 @@
+<!-- agregarprograma.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Programa</title>
+</head>
+<body>
+
+    <h1>Agregar Programa</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Guardar Programa</button>
+    </form>
+
+    <button type="button" id="botonCancelar">Cancelar</button>
+
+    <script>     
+
+    var botonCancelar = document.getElementById('botonCancelar');
+    botonCancelar.addEventListener('click', function() {
+        window.history.back(); 
+    });
+    </script>
+</body>
+</html>

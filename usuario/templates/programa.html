@@ -1,0 +1,124 @@
+<!-- En mi_interfaz.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interfaz de Usuario para programa</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .accion-icono {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Tabla de programas</h1>
+
+    <table id="tablaProgramas">
+        <thead>
+            <tr>
+                <th>Programa</th>
+                <th>Facultad</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="cuerpoTablaProgramas"></tbody>
+    </table>
+
+    <div style="text-align: right; margin-top: 10px;">
+        <span style="cursor: pointer; color: green;" onclick="agregarPrograma()">
+            &#43; Agregar Programa
+        </span>
+    </div>
+    <script>
+
+        function agregarPrograma() {
+            window.location.href = '/agregarprogramas';    
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            obtenerListaprograma();
+
+            function obtenerListaprograma() {
+                fetch('http://127.0.0.1:8000/curso/programa/programa/')  
+                    .then(response => response.json())
+                    .then(data => mostrarListaprograma(data))
+                    .catch(error => console.error('Error:', error));
+            }
+
+            function mostrarListaprograma(programas) {
+                var cuerpoTablaProgramas = document.getElementById('cuerpoTablaProgramas');
+
+                programas.forEach(function (programa) {
+                    var fila = cuerpoTablaProgramas.insertRow();
+
+                    var celdaPrograma = fila.insertCell(0);
+                    celdaPrograma.textContent = programa.info_programa;
+
+                    var celdaFacultad = fila.insertCell(1);
+                    celdaFacultad.textContent = programa.facultad;
+
+                    var celdaAcciones = fila.insertCell(2);
+                    var iconoLapiz = document.createElement('span');
+                    iconoLapiz.innerHTML = '&#9998;';  // Lápiz
+                    iconoLapiz.className = 'accion-icono';
+                    iconoLapiz.onclick = function() {
+                        editarPrograma(programa.idprograma);
+                    };
+
+                    var iconoPapelera = document.createElement('span');
+                    iconoPapelera.innerHTML = '&#128465;';  
+                    iconoPapelera.className = 'accion-icono';
+                    iconoPapelera.onclick = function() {
+                        var confirmacion = confirm('¿Estás seguro de que deseas eliminar el programa con ID ' + programa.idprograma + '?');
+                        
+                        if (confirmacion) {
+
+                            eliminarPrograma(programa.idprograma);
+                        } else {
+                            // nada
+                        }
+                    };
+
+                    celdaAcciones.appendChild(iconoLapiz);
+                    celdaAcciones.appendChild(iconoPapelera);
+                });
+            }
+            function editarPrograma(id) {
+                window.location.href = '/editarprogramas/?idprograma=' + id + '/';
+            }
+            function eliminarPrograma(id) {
+                fetch('http://127.0.0.1:8000/curso/programa/programa/' + id + '/', {
+                    method: 'DELETE',
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error al eliminar el programa');
+                    }
+                    alert('Programa eliminado con éxito');
+                    obtenerListaprograma();
+                })
+                .catch(error => console.error('Error:', error));
+            }
+
+        });
+    </script>
+
+</body>
+</html>

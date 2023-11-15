@@ -6,7 +6,10 @@ class Programa(models.Model):
     info_programa = models.TextField()
     facultad = models.CharField(max_length=45)
     jefe_programa = models.CharField(max_length=45, null=True)
-
+        
+    def __str__(self):
+        return self.info_programa
+    
 class Curso(models.Model):
     id_curso = models.IntegerField(primary_key=True)
     num_clases_rest = models.CharField(max_length=45)
@@ -28,4 +31,4 @@ class Clase(models.Model):
     profesor_ID = models.ForeignKey(NewUser, on_delete=models.DO_NOTHING)
     
     def __str__(self):
-        return self.username
+        return self.profesor_ID.username

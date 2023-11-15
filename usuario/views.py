@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.contrib.auth import login, authenticate, logout
 from django.db import IntegrityError
+from django.http import HttpResponse
 
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
@@ -16,6 +18,8 @@ from .serializer import UserSerializer,AdminSerializer, LoginSerializer
 from .models import NewUser
 from .forms import AdminUserForm, NewUserForm,LoginUserForm
 
+from curso.forms import createPrograma,updateProgrma
+from curso.models import Programa
 
 def consulta_mysql(request):
     with connection.cursor() as cursor:
@@ -114,9 +118,6 @@ def home_view(request):
    
 @method_decorator(csrf_exempt, name='dispatch')
 class SignInAPI(APIView):
-    # def get(self, request, format=None):
-    #     form = LoginUserForm()  
-    #     return render(request, 'login_template.html', {'form': form})
     def post(self, request, format=None):
         serializer = LoginSerializer(data=request.data)
 
@@ -149,3 +150,42 @@ class SignOutAPI(APIView):
         logout(request)
         return Response({'message': 'Cierre de sesión exitoso'}, status=status.HTTP_200_OK)
     
+
+def logIn(request):
+    if request.method == 'GET':
+        form = LoginUserForm()  
+        return render(request, 'login_template.html', {'form': form})
+    else:
+        user = authenticate(
+            request, username=request.POST['username'], password=request.POST['password'])
+        if user is None:
+            return render(request, 'signin.html', {"form": form, "error": "Username or password is incorrect."})
+
+        login(request, user)
+        return redirect('mainPage')
+    
+@login_required
+def mainPage(request):
+    if request.method == 'GET':
+        return render(request, 'mainPage.html')
+    
+def progrmas(request):
+    if request.method == 'GET':
+        return render(request, 'programa.html')
+
+def editarprogrmas(request):
+    idprograma = request.GET.get('idprograma')
+    return render(request, 'editarprogrma.html', {'idprograma': idprograma, 'form': updateProgrma})
+
+def crearPrograma(request):
+    if request.method == 'GET':
+        form = createPrograma()
+        return render(request, 'agregarprograma.html', {'form': form})
+    
+    elif request.method == 'POST':
+        form = createPrograma(request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponse('Programa creado con éxito.', status=201)
+        else:
+            return render(request, 'agregarprograma.html', {'form': form})

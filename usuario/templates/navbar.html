@@ -1,0 +1,45 @@
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/styleNavbar.css' %}">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="containerNavBar">
+      <a class="navbar-brand" href="/">Navbar</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+
+          {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a href="{% url 'mainPage' %}" class="nav-link">home</a>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'programas' %}">programa</a>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'curso:curso-list' %}">curso</a>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'curso:aula-list' %}">aula</a>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'prof-list' %}">profesores</a>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'logoutAPI' %}">logout</a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+  

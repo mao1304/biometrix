@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .accion-icono {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Tabla de clases</h1>
+
+    <table id="tablaclases">
+        <thead>
+            <tr>
+                <th>hora inicio</th>
+                <th>hora fin</th>
+                <th>tema</th>
+                <th>curso</th>
+                <th>aula</th>
+                <th>profesor</th>
+            </tr>
+        </thead>
+        <tbody id="cuerpoTablaclases"></tbody>
+    </table>
+
+    <div style="text-align: right; margin-top: 10px;">
+        <span style="cursor: pointer; color: green;" onclick="agregarclases()">
+            &#43; Agregar clases
+        </span>
+    </div>
+    <script>
+
+        function formatearFecha(fecha) {
+            const options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+            return new Date(fecha).toLocaleString('es-ES', options);
+        }
+
+        function agregarclases() {
+            window.location.href = '/agregarclase';    
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            obtenerListaclases();
+
+            function obtenerListaclases() {
+                fetch('http://127.0.0.1:8000/curso/clase/clase/')  
+                    .then(response => response.json())
+                    .then(data => mostrarListaclases(data))
+                    .catch(error => console.error('Error:', error));
+            }
+
+            function mostrarListaclases(clases) {
+                var cuerpoTablaclases = document.getElementById('cuerpoTablaclases');
+
+                clases.forEach(function (clases) {
+                    var fila = cuerpoTablaclases.insertRow();
+
+                    var horainicio = fila.insertCell(0);
+                    horainicio.textContent = formatearFecha(clases.hora_inicio);
+                    
+                    var horafin = fila.insertCell(1);
+                    horafin.textContent = formatearFecha(clases.hora_fin);
+
+                    var tema = fila.insertCell(2);
+                    tema.textContent = clases.tema;
+
+                    var curso = fila.insertCell(3);
+                    curso.textContent = clases.curso;
+
+                    var aula = fila.insertCell(4);
+                    aula.textContent = clases.aula;
+
+                    var profesor = fila.insertCell(5);
+                    profesor.textContent = clases.profesor_ID;
+
+                    var celdaAcciones = fila.insertCell(6);
+                    var iconoLapiz = document.createElement('span');
+                    iconoLapiz.innerHTML = '&#9998;';  // Lápiz
+                    iconoLapiz.className = 'accion-icono';
+                    iconoLapiz.onclick = function() {
+                        editarclases(clases.id);
+                    };
+
+                    var iconoPapelera = document.createElement('span');
+                    iconoPapelera.innerHTML = '&#128465;';  
+                    iconoPapelera.className = 'accion-icono';
+                    iconoPapelera.onclick = function() {
+                        var confirmacion = confirm('¿Estás seguro de que deseas eliminar el clases con ID ' + clases.id + '?');
+                        
+                        if (confirmacion) {
+
+                            eliminarclases(clases.id);
+                        } else {
+                            // nada
+                        }
+                    };
+
+                    celdaAcciones.appendChild(iconoLapiz);
+                    celdaAcciones.appendChild(iconoPapelera);
+                });
+            }
+            function editarclases(id) {
+                window.location.href = '/editarclase/?id=' + id + '/';
+            }
+            function eliminarclases(id) {
+                fetch('http://127.0.0.1:8000/curso/clase/clase/' + id + '/', {
+                    method: 'DELETE',
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error al eliminar el clases');
+                    }
+                    alert('clases eliminado con éxito');
+                    obtenerListaclases();
+                })
+                .catch(error => console.error('Error:', error));
+            }
+
+        });
+    </script>
+
+{% endblock %}

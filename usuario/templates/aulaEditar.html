@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar aula</title>
+</head>
+<body>
+
+    <h1>Editar aula {{ idaula }}</h1>
+
+    <form id="formularioEditaraula">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Guardar Cambios</button>
+    </form>
+
+    <button type="button" id="botonCancelar">Cancelar</button>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            obtenerDetallesaula();
+
+            function obtenerDetallesaula() {
+                var urlParams = new URLSearchParams(window.location.search);             
+                var idaula = urlParams.get('idaula');
+
+                if (idaula) {
+                    fetch('http://127.0.0.1:8000/curso/aula/aula/' + idaula)
+                        .then(response => response.json())
+                        .then(data => mostrarDetallesaula(data))
+                        .catch(error => console.error('Error:', error));
+                } else {
+                    console.error('No se encontró el ID del aula en la URL.');
+                }
+            }
+
+            function mostrarDetallesaula(aula) {
+                var formularioEditaraula = document.getElementById('formularioEditaraula');
+
+                formularioEditaraula.elements['idaula'].value = aula.idaula;
+                formularioEditaraula.elements['numero'].value = aula.numero;
+            }
+
+            var botonCancelar = document.getElementById('botonCancelar');
+            botonCancelar.addEventListener('click', function() {
+                window.history.back();
+            });
+        });
+    </script>
+
+</body>
+</html>

@@ -18,20 +18,31 @@ from .serializer import UserSerializer,AdminSerializer, LoginSerializer
 from .models import NewUser
 from .forms import AdminUserForm, NewUserForm,LoginUserForm
 
-from curso.forms import createPrograma,updateProgrma
+from curso.forms import createPrograma,updateProgrma,createCurso,createAula,creatClase
 from curso.models import Programa
 
-def consulta_mysql(request):
+def generarTabla(request):
     with connection.cursor() as cursor:
-        cursor.execute("SELECT curso.ciclo as ciclo,clase.curso_id,programa.info_programa,curso.grupo, curso.descripcion, DATE_FORMAT(hora_inicio, '%H:%i') AS 'hora de inicio',DATE_FORMAT(hora_fin, '%H:%i') AS 'hora de fin', clase.tema, clase.aula_id as aula, curso.num_clases_rest as 'num clases vistas', aula.numero as Aula from curso_clase as clase inner join curso_curso as curso on clase.curso_id = curso.id_curso inner join curso_programa as programa on curso.programa_id = programa.idprograma inner join curso_aula as aula on aula.idaula = clase.aula_id;")
+        cursor.execute("SELECT curso.ciclo as ciclo,clase.curso_id,programa.info_programa,curso.grupo, curso.descripcion, DATE_FORMAT(hora_inicio, '%H:%i') AS 'hora de inicio',DATE_FORMAT(hora_fin, '%H:%i') AS 'hora de fin', clase.tema, clase.aula_id as aula, curso.num_clases_rest as 'num clases vistas', aula.numero as Aula,clase.profesor_ID_id as profesor from curso_clase as clase inner join curso_curso as curso on clase.curso_id = curso.id_curso inner join curso_programa as programa on curso.programa_id = programa.idprograma inner join curso_aula as aula on aula.idaula = clase.aula_id;")
         resultados = cursor.fetchall()
     return render(request, 'home.html', {'resultados': resultados})
+
+def consultarClasesProf(request, idprof):
+    with connection.cursor() as cursor:
+        try:
+            cursor.callproc('clasesprof', args=(idprof,))  
+            for result in cursor.stored_results():
+                rows = result.fetchall()
+        finally:
+            cursor.close()
+            
+    return render(request, 'list.html', {'resultado': rows})
+
 
 
 class ReadOnlyUserPermission(permissions.BasePermission):
     def has_permission(self, request, view):
-        return request.method in ['GET', 'PUT', 'PATCH', 'DELETE']
-    
+        return request.method in ['GET', 'PUT', 'PATCH', 'DELETE']  
 class UserView(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     def get_queryset(self):
@@ -143,7 +154,6 @@ class SignInAPI(APIView):
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(csrf_exempt, name='dispatch')
-
 class SignOutAPI(APIView):
     def post(self, request, format=None):
         request.session.flush()
@@ -159,16 +169,23 @@ def logIn(request):
         user = authenticate(
             request, username=request.POST['username'], password=request.POST['password'])
         if user is None:
-            return render(request, 'signin.html', {"form": form, "error": "Username or password is incorrect."})
+            form = LoginUserForm()  
+            return render(request, 'login_template.html', {"form": form, "error": "Username or password is incorrect."})
 
         login(request, user)
         return redirect('mainPage')
-    
+
+@login_required
+def signout(request):
+    logout(request)
+    return redirect('login')
+
 @login_required
 def mainPage(request):
     if request.method == 'GET':
         return render(request, 'mainPage.html')
     
+#views de el crud de programa 
 def progrmas(request):
     if request.method == 'GET':
         return render(request, 'programa.html')
@@ -186,6 +203,76 @@ def crearPrograma(request):
         form = createPrograma(request.POST)
         if form.is_valid():
             form.save()
-            return HttpResponse('Programa creado con éxito.', status=201)
+            mensaje = 'Programa creado con éxito.'
+            return render(request, 'agregarprograma.html', {'form': createPrograma(), 'mensaje': mensaje})
         else:
             return render(request, 'agregarprograma.html', {'form': form})
+
+#views de el crud de curso 
+def curso(request):
+    if request.method == 'GET':
+        return render(request, 'curso.html')
+
+def editarcurso(request):
+    id_curso = request.GET.get('id_curso')
+    return render(request, 'cursoEditar.html', {'id_curso': id_curso, 'form': createCurso})
+
+def crearcurso(request):
+    if request.method == 'GET':
+        form = createCurso()
+        return render(request, 'cursoCrear.html', {'form': form})
+    
+    elif request.method == 'POST':
+        form = createCurso(request.POST)
+        if form.is_valid():
+            form.save()
+            mensaje = 'Programa creado con éxito.'
+            return render(request, 'cursoCrear.html', {'form': createCurso(), 'mensaje': mensaje})
+        else:
+            return render(request, 'cursoCrear.html', {'form': form})
+
+#views de el crud de aula
+def aula(request):
+    if request.method == 'GET':
+        return render(request, 'aula.html')
+
+def editaraula(request):
+    id_curso = request.GET.get('id_curso')
+    return render(request, 'aulaEditar.html', {'id_curso': id_curso, 'form': createAula})
+
+def agregaraula(request):
+    if request.method == 'GET':
+        form = createAula()
+        return render(request, 'aulaCrear.html', {'form': form})
+    
+    elif request.method == 'POST':
+        form = createAula(request.POST)
+        if form.is_valid():
+            form.save()
+            mensaje = 'Programa creado con éxito.'
+            return render(request, 'aulaCrear.html', {'form': createAula(), 'mensaje': mensaje})
+        else:
+            return render(request, 'aulaCrear.html', {'form': form})
+
+#views de el crud de clase
+def clase(request):
+    if request.method == 'GET':
+        return render(request, 'clase.html')
+
+def editarclase(request):
+    id = request.GET.get('id')
+    return render(request, 'claseEditar.html', {'id': id, 'form': creatClase})
+
+def agregarclase(request):
+    if request.method == 'GET':
+        form = creatClase()
+        return render(request, 'claseCrear.html', {'form': form})
+    
+    elif request.method == 'POST':
+        form = creatClase(request.POST)
+        if form.is_valid():
+            form.save()
+            mensaje = 'Programa creado con éxito.'
+            return render(request, 'aulaCrear.html', {'form': creatClase(), 'mensaje': mensaje})
+        else:
+            return render(request, 'aulaCrear.html', {'form': form})

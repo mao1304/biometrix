@@ -18,75 +18,75 @@
         }
 
         .accion-icono {
-            cursor: pointer;
+            aular: pointer;
         }
     </style>
 </head>
 <body>
 
-    <h1>Tabla de programas</h1>
+    <h1>Tabla de aula</h1>
 
-    <table id="tablaProgramas">
+    <table id="tablaaula">
         <thead>
             <tr>
-                <th>Programa</th>
-                <th>Facultad</th>
-                <th>Acciones</th>
+                <th>id</th>
+                <th>numero</th>
+                <th>acciones</th>
             </tr>
         </thead>
-        <tbody id="cuerpoTablaProgramas"></tbody>
+        <tbody id="cuerpoTablaaula"></tbody>
     </table>
 
     <div style="text-align: right; margin-top: 10px;">
-        <span style="cursor: pointer; color: green;" onclick="agregarPrograma()">
-            &#43; Agregar Programa
+        <span style="aular: pointer; color: green;" onclick="agregaraula()">
+            &#43; Agregar aula
         </span>
     </div>
     <script>
 
-        function agregarPrograma() {
-            window.location.href = '/agregarprogramas';    
+        function agregaraula() {
+            window.location.href = '/agregaraula';    
         }
 
         document.addEventListener("DOMContentLoaded", function () {
-            obtenerListaprograma();
+            obtenerListaaula();
 
-            function obtenerListaprograma() {
-                fetch('http://127.0.0.1:8000/curso/programa/programa/')  
+            function obtenerListaaula() {
+                fetch('http://127.0.0.1:8000/curso/aula/aula/')  
                     .then(response => response.json())
-                    .then(data => mostrarListaprograma(data))
+                    .then(data => mostrarListaaula(data))
                     .catch(error => console.error('Error:', error));
             }
 
-            function mostrarListaprograma(programas) {
-                var cuerpoTablaProgramas = document.getElementById('cuerpoTablaProgramas');
+            function mostrarListaaula(aula) {
+                var cuerpoTablaaula = document.getElementById('cuerpoTablaaula');
 
-                programas.forEach(function (programa) {
-                    var fila = cuerpoTablaProgramas.insertRow();
+                aula.forEach(function (aula) {
+                    var fila = cuerpoTablaaula.insertRow();
 
-                    var celdaPrograma = fila.insertCell(0);
-                    celdaPrograma.textContent = programa.info_programa;
+                    var celdaaula = fila.insertCell(0);
+                    celdaaula.textContent = aula.idaula;
 
                     var celdaFacultad = fila.insertCell(1);
-                    celdaFacultad.textContent = programa.facultad;
-
+                    celdaFacultad.textContent = aula.numero;
+                
                     var celdaAcciones = fila.insertCell(2);
                     var iconoLapiz = document.createElement('span');
                     iconoLapiz.innerHTML = '&#9998;';  // Lápiz
                     iconoLapiz.className = 'accion-icono';
                     iconoLapiz.onclick = function() {
-                        editarPrograma(programa.idprograma);
+                        editaraula(aula.idaula);
                     };
 
                     var iconoPapelera = document.createElement('span');
                     iconoPapelera.innerHTML = '&#128465;';  
                     iconoPapelera.className = 'accion-icono';
                     iconoPapelera.onclick = function() {
-                        var confirmacion = confirm('¿Estás seguro de que deseas eliminar el programa con ID ' + programa.idprograma + '?');
+                        var confirmacion = confirm('¿Estás seguro de que deseas eliminar el aula con ID ' + aula.idaula + '?');
                         
                         if (confirmacion) {
 
-                            eliminarPrograma(programa.idprograma);
+                            eliminaraula(aula.idaula);
                         } else {
                             // nada
                         }
@@ -96,19 +96,26 @@
                     celdaAcciones.appendChild(iconoPapelera);
                 });
             }
-            function editarPrograma(id) {
-                window.location.href = '/editarprogramas/?idprograma=' + id + '/';
+            function editaraula(id) {
+                window.location.href = '/editaraula/?idaula=' + id + '/';
             }
-            function eliminarPrograma(id) {
-                fetch('http://127.0.0.1:8000/curso/programa/programa/' + id + '/', {
+            function eliminaraula(id) {
+                fetch('http://127.0.0.1:8000/curso/aula/aula/' + id + '/', {
                     method: 'DELETE',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
                 })
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('Error al eliminar el programa');
+                        throw new Error('Error al eliminar el aula');
                     }
-                    alert('Programa eliminado con éxito');
-                    obtenerListaprograma();
+                    return response.json();
+                })
+                .then(data => {
+                    alert('aula eliminado con éxito');
+                    obtenerListaaula();
                 })
                 .catch(error => console.error('Error:', error));
             }

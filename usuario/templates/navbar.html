@@ -26,20 +26,22 @@
             <a href="{% url 'programas' %}">programa</a>
           </li>
           <li class="nav-item">
-            <a href="{% url 'curso:curso-list' %}">curso</a>
+            <a href="{% url 'curso' %}">curso</a>
           </li>
           <li class="nav-item">
-            <a href="{% url 'curso:aula-list' %}">aula</a>
+            <a href="{% url 'aula' %}">aula</a>
           </li>
           <li class="nav-item">
-            <a href="{% url 'prof-list' %}">profesores</a>
+            <a href="{% url 'clase' %}">clases</a>
           </li>
           <li class="nav-item">
-            <a href="{% url 'logoutAPI' %}">logout</a>
+            <a href="{% url 'aula' %}">usuarios</a>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'signout' %}">logout</a>
           </li>
           {% endif %}
         </ul>
       </div>
     </div>
   </nav>
-  

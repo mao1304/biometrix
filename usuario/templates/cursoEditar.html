@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar curso</title>
+</head>
+<body>
+
+    <h1>Editar curso {{ id_curso }}</h1>
+
+    <form id="formularioEditarcurso">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Guardar Cambios</button>
+    </form>
+
+    <button type="button" id="botonCancelar">Cancelar</button>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            obtenerDetallescurso();
+
+            function obtenerDetallescurso() {
+                var urlParams = new URLSearchParams(window.location.search);             
+                var id_curso = urlParams.get('id_curso');
+
+                if (id_curso) {
+                    fetch('http://127.0.0.1:8000/curso/curso/curso/' + id_curso)
+                        .then(response => response.json())
+                        .then(data => mostrarDetallescurso(data))
+                        .catch(error => console.error('Error:', error));
+                } else {
+                    console.error('No se encontró el ID del curso en la URL.');
+                }
+            }
+
+            function mostrarDetallescurso(curso) {
+                var formularioEditarcurso = document.getElementById('formularioEditarcurso');
+
+                formularioEditarcurso.elements['id_curso'].value = curso.id_curso;
+                formularioEditarcurso.elements['num_clases_rest'].value = curso.num_clases_rest;
+                formularioEditarcurso.elements['descripcion'].value = curso.descripcion;
+                formularioEditarcurso.elements['ciclo'].value = curso.ciclo;
+                formularioEditarcurso.elements['grupo'].value = curso.grupo;
+                formularioEditarcurso.elements['programa'].value = curso.programa;
+            }
+
+            var botonCancelar = document.getElementById('botonCancelar');
+            botonCancelar.addEventListener('click', function() {
+                window.history.back();
+            });
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar clase</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.js"></script>
+</head>
+<body>
+    
+    <h1>Editar clase {{ id }}</h1>
+
+    <form id="formularioEditarclase">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Guardar Cambios</button>
+    </form>
+
+    <button type="button" id="botonCancelar">Cancelar</button>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            obtenerDetallesclase();
+
+            function obtenerDetallesclase() {
+                var urlParams = new URLSearchParams(window.location.search);             
+                var id = urlParams.get('id');
+
+                if (id) {
+                    fetch('http://127.0.0.1:8000/curso/clase/clase/' + id)
+                        .then(response => response.json())
+                        .then(data => mostrarDetallesclase(data))
+                        .catch(error => console.error('Error:', error));
+                } else {
+                    console.error('No se encontró el ID del clase en la URL.');
+                }
+            }
+
+            function mostrarDetallesclase(clase) {
+                var formularioEditarclase = document.getElementById('formularioEditarclase');
+
+                // Configurar el selector de fecha y hora
+                $(formularioEditarclase.elements['hora_inicio']).datetimepicker({
+                    dateFormat: 'yy-mm-dd',
+                    timeFormat: 'HH:mm:ss',
+                    showSecond: true,
+                    showMillisec: false,
+                    showMicrosec: false,
+                });
+
+                $(formularioEditarclase.elements['hora_fin']).datetimepicker({
+                    dateFormat: 'yy-mm-dd',
+                    timeFormat: 'HH:mm:ss',
+                    showSecond: true,
+                    showMillisec: false,
+                    showMicrosec: false,
+                });
+
+                // Rellenar los valores del formulario
+                formularioEditarclase.elements['hora_fin'].value = clase.hora_fin;
+                formularioEditarclase.elements['hora_inicio'].value = clase.hora_inicio;
+                formularioEditarclase.elements['tema'].value = clase.tema;
+                formularioEditarclase.elements['curso'].value = clase.curso;
+                formularioEditarclase.elements['aula'].value = clase.aula;
+                formularioEditarclase.elements['profesor_ID'].value = clase.profesor_ID;
+            }
+
+            var botonCancelar = document.getElementById('botonCancelar');
+            botonCancelar.addEventListener('click', function() {
+                window.history.back();
+            });
+        });
+    </script>
+
+</body>
+</html>

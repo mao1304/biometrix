@@ -83,7 +83,7 @@ WSGI_APPLICATION = 'boimetrixUCC.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'biometrixDB',
+        'NAME': 'dbD',
         'USER': 'root',
         'PASSWORD': '',
         'HOST': '127.0.0.1',

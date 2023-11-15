@@ -20,10 +20,30 @@ urlpatterns = [
     
     #web views 
     path('',views.logIn, name='login'),
+    path('signout/',views.signout, name='signout'),
     path('mainPage/',views.mainPage, name='mainPage'),
+    #view crud programa
     path('programas/',views.progrmas, name='programas'),
     path('editarprogramas/', views.editarprogrmas, name='editarprogramas'),
     path('agregarprogramas/', views.crearPrograma, name='agregarprogramas'),
-
+    #view crud curso
+    path('curso/',views.curso, name='curso'),
+    path('editarcurso/', views.editarcurso, name='editarcurso'),
+    path('agregarcurso/', views.crearcurso, name='agregarcurso'),
+    #view crud aula
+    path('aula/',views.aula, name='aula'),
+    path('editaraula/', views.editaraula, name='editaraula'),
+    path('agregaraula/', views.agregaraula, name='agregaraula'),
+    #view crud clases
+    path('clases/',views.clase, name='clase'),
+    path('editarclase/', views.editarclase, name='editarclase'),
+    path('agregarclase/', views.agregarclase, name='agregarclase'),
+    #view crud usuarios
+    path('usuarios/',views.aula, name='aula'),
+    path('editaraula/', views.editaraula, name='editaraula'),
+    path('agregaraula/', views.agregaraula, name='agregaraula'),
+    
+    path('consultarlista/', views.consultarClasesProf , name='consultarClasesProf'),
+    
 ]
   

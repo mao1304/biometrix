@@ -1,10 +1,15 @@
-{% extends 'base.html'%}
-
-{% block content %}
-
 {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Página Principal</title>
+</head>
 
-<link rel="stylesheet" href="{% static 'css/styleLogin.css' %}">
+<body> 
+
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
 
   <div id="container">
     <h1>Log In</h1>
@@ -21,4 +26,4 @@
         <button type="submit">Iniciar Sesión</button>
     </form>
   </div>
-{% endblock %}
+</body>

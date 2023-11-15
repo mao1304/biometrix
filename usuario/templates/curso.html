@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .accion-icono {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Tabla de curso</h1>
+
+    <table id="tablacurso">
+        <thead>
+            <tr>
+                <th>id</th>
+                <th>clases vistas</th>
+                <th>descripcion</th>
+                <th>ciclo</th>
+                <th>grupo</th>
+                <th>programa</th>
+                <th>acciones</th>
+            </tr>
+        </thead>
+        <tbody id="cuerpoTablacurso"></tbody>
+    </table>
+
+    <div style="text-align: right; margin-top: 10px;">
+        <span style="cursor: pointer; color: green;" onclick="agregarcurso()">
+            &#43; Agregar curso
+        </span>
+    </div>
+    <script>
+
+        function agregarcurso() {
+            window.location.href = '/agregarcurso';    
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            obtenerListacurso();
+
+            function obtenerListacurso() {
+                fetch('http://127.0.0.1:8000/curso/curso/curso/')  
+                    .then(response => response.json())
+                    .then(data => mostrarListacurso(data))
+                    .catch(error => console.error('Error:', error));
+            }
+
+            function mostrarListacurso(curso) {
+                var cuerpoTablacurso = document.getElementById('cuerpoTablacurso');
+
+                curso.forEach(function (curso) {
+                    var fila = cuerpoTablacurso.insertRow();
+
+                    var celdacurso = fila.insertCell(0);
+                    celdacurso.textContent = curso.id_curso;
+
+                    var celdaFacultad = fila.insertCell(1);
+                    celdaFacultad.textContent = curso.num_clases_rest;
+                    
+                    var celdaDescripcion = fila.insertCell(2);
+                    celdaDescripcion.textContent = curso.descripcion;
+                    
+                    var celdaCiclo = fila.insertCell(3);
+                    celdaCiclo.textContent = curso.ciclo;
+                    
+                    var celdaGrupo = fila.insertCell(4);
+                    celdaGrupo.textContent = curso.grupo;
+                    
+                    var celdaPrograma = fila.insertCell(5);
+                    celdaPrograma.textContent = curso.programa;
+
+                    var celdaAcciones = fila.insertCell(6);
+                    var iconoLapiz = document.createElement('span');
+                    iconoLapiz.innerHTML = '&#9998;';  // Lápiz
+                    iconoLapiz.className = 'accion-icono';
+                    iconoLapiz.onclick = function() {
+                        editarcurso(curso.id_curso);
+                    };
+
+                    var iconoPapelera = document.createElement('span');
+                    iconoPapelera.innerHTML = '&#128465;';  
+                    iconoPapelera.className = 'accion-icono';
+                    iconoPapelera.onclick = function() {
+                        var confirmacion = confirm('¿Estás seguro de que deseas eliminar el curso con ID ' + curso.id_curso + '?');
+                        
+                        if (confirmacion) {
+
+                            eliminarcurso(curso.id_curso);
+                        } else {
+                            // nada
+                        }
+                    };
+
+                    celdaAcciones.appendChild(iconoLapiz);
+                    celdaAcciones.appendChild(iconoPapelera);
+                });
+            }
+            function editarcurso(id) {
+                window.location.href = '/editarcurso/?id_curso=' + id + '/';
+            }
+            function eliminarcurso(id) {
+                fetch('http://127.0.0.1:8000/curso/curso/curso/' + id + '/', {
+                    method: 'DELETE',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error al eliminar el curso');
+                    }
+                    return response.json(); // Procesar la respuesta si es necesario
+                })
+                .then(data => {
+                    alert('curso eliminado con éxito');
+                    obtenerListacurso();
+                })
+                .catch(error => console.error('Error:', error));
+            }
+
+        });
+    </script>
+
+{% endblock %}

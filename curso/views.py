@@ -19,7 +19,7 @@ class claseView(viewsets.ModelViewSet):
     
 class cursoView(viewsets.ModelViewSet):
     serializer_class = serializerCurso.CursoSerializer
-    queryset = ModelsCurso.Clase.objects.all()
+    queryset = ModelsCurso.Curso.objects.all()
     
 class ProgramaView(APIView):
     def get(self, request, *args, **kwargs):

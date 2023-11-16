@@ -30,7 +30,7 @@
         <thead>
             <tr>
                 <th>id</th>
-                <th>numero</th>
+                <th>descripcion</th>
                 <th>acciones</th>
             </tr>
         </thead>
@@ -68,7 +68,7 @@
                     celdaaula.textContent = aula.idaula;
 
                     var celdaFacultad = fila.insertCell(1);
-                    celdaFacultad.textContent = aula.numero;
+                    celdaFacultad.textContent = aula.descripcion;
                 
                     var celdaAcciones = fila.insertCell(2);
                     var iconoLapiz = document.createElement('span');

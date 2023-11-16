@@ -23,9 +23,9 @@ from curso.models import Programa
 
 def generarTabla(request):
     with connection.cursor() as cursor:
-        cursor.execute("SELECT curso.ciclo as ciclo,clase.curso_id,programa.info_programa,curso.grupo, curso.descripcion, DATE_FORMAT(hora_inicio, '%H:%i') AS 'hora de inicio',DATE_FORMAT(hora_fin, '%H:%i') AS 'hora de fin', clase.tema, clase.aula_id as aula, curso.num_clases_rest as 'num clases vistas', aula.numero as Aula,clase.profesor_ID_id as profesor from curso_clase as clase inner join curso_curso as curso on clase.curso_id = curso.id_curso inner join curso_programa as programa on curso.programa_id = programa.idprograma inner join curso_aula as aula on aula.idaula = clase.aula_id;")
+        cursor.execute("SELECT curso.ciclo as ciclo,clase.curso_id,programa.info_programa,curso.grupo, curso.descripcion, DATE_FORMAT(hora_inicio, '%H:%i') AS 'hora de inicio',DATE_FORMAT(hora_fin, '%H:%i') AS 'hora de fin', clase.tema, clase.aula_id as aula, curso.num_clases_vistas as 'num clases vistas', aula.descripcion as Aula,clase.profesor_ID_id as profesor from curso_clase as clase inner join curso_curso as curso on clase.curso_id = curso.id_curso inner join curso_programa as programa on curso.programa_id = programa.idprograma inner join curso_aula as aula on aula.idaula = clase.aula_id;")
         resultados = cursor.fetchall()
-    return render(request, 'home.html', {'resultados': resultados})
+    return render(request, 'consulta.html', {'resultados': resultados})
 
 def consultarClasesProf(request, idprof):
     with connection.cursor() as cursor:
@@ -46,13 +46,13 @@ class ReadOnlyUserPermission(permissions.BasePermission):
 class UserView(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     def get_queryset(self):
-        return NewUser.objects.filter(admin_check=False)  
+        return NewUser.objects.filter(is_staff=False)  
     permission_classes = [ReadOnlyUserPermission]
 
 class AdminView(viewsets.ModelViewSet):
     serializer_class = AdminSerializer
     def get_queryset(self):
-        return NewUser.objects.filter(admin_check=True)  
+        return NewUser.objects.filter(is_staff=True)  
     permission_classes = [ReadOnlyUserPermission]
 
 @method_decorator(csrf_exempt, name='dispatch')

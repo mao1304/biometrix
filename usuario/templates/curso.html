@@ -72,7 +72,7 @@
                     celdacurso.textContent = curso.id_curso;
 
                     var celdaFacultad = fila.insertCell(1);
-                    celdaFacultad.textContent = curso.num_clases_rest;
+                    celdaFacultad.textContent = curso.num_clases_vistas;
                     
                     var celdaDescripcion = fila.insertCell(2);
                     celdaDescripcion.textContent = curso.descripcion;
@@ -116,7 +116,7 @@
                 window.location.href = '/editarcurso/?id_curso=' + id + '/';
             }
             function eliminarcurso(id) {
-                fetch('http://127.0.0.1:8000/curso/curso/curso/' + id + '/', {
+                fetch('http://127.0.0.1:8000/curso/curso/' + id + '/', {
                     method: 'DELETE',
                     headers: {
                         'Accept': 'application/json',

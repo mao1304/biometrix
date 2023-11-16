@@ -31,7 +31,9 @@
             <tr>
                 <th>Programa</th>
                 <th>Facultad</th>
+                <th>id</th>
                 <th>Acciones</th>
+
             </tr>
         </thead>
         <tbody id="cuerpoTablaProgramas"></tbody>
@@ -70,7 +72,10 @@
                     var celdaFacultad = fila.insertCell(1);
                     celdaFacultad.textContent = programa.facultad;
 
-                    var celdaAcciones = fila.insertCell(2);
+                    var celdaoid = fila.insertCell(2);
+                    celdaoid.textContent = programa.idprograma;
+
+                    var celdaAcciones = fila.insertCell(3);
                     var iconoLapiz = document.createElement('span');
                     iconoLapiz.innerHTML = '&#9998;';  // Lápiz
                     iconoLapiz.className = 'accion-icono';

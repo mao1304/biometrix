@@ -1,3 +1,47 @@
-body {
-    background-color: #fff;
-}
+/* Estilos para la navbar */
+* {
+    padding: 0;
+    margin: 0;
+  }
+  
+  body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    min-height: 100vh;
+    font-family: 'YourFont', sans-serif; /* Reemplaza 'YourFont' con la fuente que desees */
+  }
+  
+  nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: #fff;
+    z-index: 1000;
+  }
+  
+  .menuItems {
+    list-style: none;
+    display: flex;
+    padding: 15px;
+  }
+  
+  li {
+    margin-right: 20px;
+  }
+  
+  a {
+    text-decoration: none;
+    color: #000;
+    font-size: 18px;
+    font-weight: 400;
+    transition: color 0.3s ease-in-out;
+  }
+  
+  a:hover {
+    color: #8254ff;
+  }
+  
+  

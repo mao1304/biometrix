@@ -4,11 +4,8 @@ from django.contrib.auth.models import AbstractUser, PermissionsMixin
     
 class NewUser(AbstractUser, PermissionsMixin):
 
-    huella = models.CharField(max_length=200, blank=True, )
-    admin_check = models.BooleanField( default=False,)
- 
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['huella']
+    REQUIRED_FIELDS = ['email']
     
     def __str__(self):
         return self.username
@@ -25,5 +22,5 @@ class faltas(models.Model):
     ID_profesor = models.ForeignKey(NewUser, on_delete = models.DO_NOTHING)
     
     def __str__(self):
-        return self.ID_profesor
+        return self.ID_profesor.username
     

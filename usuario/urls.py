@@ -20,6 +20,7 @@ urlpatterns = [
     
     #web views 
     path('',views.logIn, name='login'),
+    path('generarTabla',views.generarTabla, name='generarTabla'),
     path('signout/',views.signout, name='signout'),
     path('mainPage/',views.mainPage, name='mainPage'),
     #view crud programa

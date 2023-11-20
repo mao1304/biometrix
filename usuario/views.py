@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth import login, authenticate, logout
 from django.db import IntegrityError
-from django.http import HttpResponse
 
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
@@ -19,14 +18,13 @@ from .models import NewUser
 from .forms import AdminUserForm, NewUserForm,LoginUserForm
 
 from curso.forms import createPrograma,updateProgrma,createCurso,createAula,creatClase
-from curso.models import Programa
-
+@method_decorator(csrf_exempt, name='dispatch')  
 def generarTabla(request):
     with connection.cursor() as cursor:
         cursor.execute("SELECT curso.ciclo as ciclo,clase.curso_id,programa.info_programa,curso.grupo, curso.descripcion, DATE_FORMAT(hora_inicio, '%H:%i') AS 'hora de inicio',DATE_FORMAT(hora_fin, '%H:%i') AS 'hora de fin', clase.tema, clase.aula_id as aula, curso.num_clases_vistas as 'num clases vistas', aula.descripcion as Aula,clase.profesor_ID_id as profesor from curso_clase as clase inner join curso_curso as curso on clase.curso_id = curso.id_curso inner join curso_programa as programa on curso.programa_id = programa.idprograma inner join curso_aula as aula on aula.idaula = clase.aula_id;")
         resultados = cursor.fetchall()
     return render(request, 'consulta.html', {'resultados': resultados})
-
+@method_decorator(csrf_exempt, name='dispatch')  
 def consultarClasesProf(request, idprof):
     with connection.cursor() as cursor:
         try:
@@ -37,9 +35,7 @@ def consultarClasesProf(request, idprof):
             cursor.close()
             
     return render(request, 'list.html', {'resultado': rows})
-
-
-
+ 
 class ReadOnlyUserPermission(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.method in ['GET', 'PUT', 'PATCH', 'DELETE']  
@@ -122,7 +118,7 @@ class SignUpUserAPI(APIView):
             print("Datos del formulario:", request.data)
             return Response({'error': 'Datos no válidos'}, status=status.HTTP_400_BAD_REQUEST)
 
-
+@method_decorator(csrf_exempt, name='dispatch')  
 def home_view(request):
     return render(request, 'registrer.html')
 
@@ -160,7 +156,7 @@ class SignOutAPI(APIView):
         logout(request)
         return Response({'message': 'Cierre de sesión exitoso'}, status=status.HTTP_200_OK)
     
-
+@method_decorator(csrf_exempt, name='dispatch')  
 def logIn(request):
     if request.method == 'GET':
         form = LoginUserForm()  
@@ -174,26 +170,26 @@ def logIn(request):
 
         login(request, user)
         return redirect('mainPage')
-
+@method_decorator(csrf_exempt, name='dispatch')  
 @login_required
 def signout(request):
     logout(request)
     return redirect('login')
-
+@method_decorator(csrf_exempt, name='dispatch')  
 @login_required
 def mainPage(request):
     if request.method == 'GET':
         return render(request, 'mainPage.html')
-    
+@method_decorator(csrf_exempt, name='dispatch')      
 #views de el crud de programa 
 def progrmas(request):
     if request.method == 'GET':
         return render(request, 'programa.html')
-
+@method_decorator(csrf_exempt, name='dispatch')  
 def editarprogrmas(request):
     idprograma = request.GET.get('idprograma')
     return render(request, 'editarprogrma.html', {'idprograma': idprograma, 'form': updateProgrma})
-
+@method_decorator(csrf_exempt, name='dispatch')  
 def crearPrograma(request):
     if request.method == 'GET':
         form = createPrograma()
@@ -207,16 +203,16 @@ def crearPrograma(request):
             return render(request, 'agregarprograma.html', {'form': createPrograma(), 'mensaje': mensaje})
         else:
             return render(request, 'agregarprograma.html', {'form': form})
-
+@method_decorator(csrf_exempt, name='dispatch')  
 #views de el crud de curso 
 def curso(request):
     if request.method == 'GET':
         return render(request, 'curso.html')
-
+@method_decorator(csrf_exempt, name='dispatch')  
 def editarcurso(request):
     id_curso = request.GET.get('id_curso')
     return render(request, 'cursoEditar.html', {'id_curso': id_curso, 'form': createCurso})
-
+@method_decorator(csrf_exempt, name='dispatch')  
 def crearcurso(request):
     if request.method == 'GET':
         form = createCurso()
@@ -230,16 +226,16 @@ def crearcurso(request):
             return render(request, 'cursoCrear.html', {'form': createCurso(), 'mensaje': mensaje})
         else:
             return render(request, 'cursoCrear.html', {'form': form})
-
+@method_decorator(csrf_exempt, name='dispatch')  
 #views de el crud de aula
 def aula(request):
     if request.method == 'GET':
         return render(request, 'aula.html')
-
+@method_decorator(csrf_exempt, name='dispatch')  
 def editaraula(request):
     id_curso = request.GET.get('id_curso')
     return render(request, 'aulaEditar.html', {'id_curso': id_curso, 'form': createAula})
-
+@method_decorator(csrf_exempt, name='dispatch')  
 def agregaraula(request):
     if request.method == 'GET':
         form = createAula()
@@ -253,16 +249,16 @@ def agregaraula(request):
             return render(request, 'aulaCrear.html', {'form': createAula(), 'mensaje': mensaje})
         else:
             return render(request, 'aulaCrear.html', {'form': form})
-
+@method_decorator(csrf_exempt, name='dispatch')  
 #views de el crud de clase
 def clase(request):
     if request.method == 'GET':
         return render(request, 'clase.html')
-
+@method_decorator(csrf_exempt, name='dispatch')  
 def editarclase(request):
     id = request.GET.get('id')
     return render(request, 'claseEditar.html', {'id': id, 'form': creatClase})
-
+@method_decorator(csrf_exempt, name='dispatch')  
 def agregarclase(request):
     if request.method == 'GET':
         form = creatClase()

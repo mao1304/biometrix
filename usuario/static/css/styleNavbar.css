@@ -11,14 +11,14 @@
     align-items: center;
     position: relative;
     min-height: 100vh;
-    font-family: 'YourFont', sans-serif; /* Reemplaza 'YourFont' con la fuente que desees */
+    font-family: sans-serif; 
   }
   
   nav {
     position: fixed;
     top: 0;
     width: 100%;
-    background: #fff;
+    background: #757474 !important;
     z-index: 1000;
   }
   
@@ -43,5 +43,4 @@
   a:hover {
     color: #8254ff;
   }
-  
   

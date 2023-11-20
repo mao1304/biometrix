@@ -1,10 +1,12 @@
-<!-- En editar_programa.html -->
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Programa</title>
+    <link rel="stylesheet" href="{% static 'css/forms.css' %}">
 </head>
 <body>
 
@@ -13,10 +15,11 @@
     <form id="formularioEditarPrograma">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Guardar Cambios</button>
+        <div class="button-container">
+            <button type="button" id="botonGuardarCambios">Guardar cambios</button>
+            <button type="button"id="botonCancelar" class="cancel-button">Cancelar</button>
+        </div>
     </form>
-
-    <button type="button" id="botonCancelar">Cancelar</button>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -44,10 +47,42 @@
                 formularioEditarPrograma.elements['facultad'].value = programa.facultad;
             }
 
+            var botonGuardarCambios = document.getElementById('botonGuardarCambios');
+            botonGuardarCambios.addEventListener('click', function() {
+                guardarCambiosPrograma();
+            });
+
             var botonCancelar = document.getElementById('botonCancelar');
             botonCancelar.addEventListener('click', function() {
                 window.history.back();
             });
+
+            function guardarCambiosPrograma() {
+                var formularioEditarPrograma = document.getElementById('formularioEditarPrograma');
+                var urlParams = new URLSearchParams(window.location.search);  
+                var idPrograma = urlParams.get('idprograma');
+            
+                fetch('http://127.0.0.1:8000/curso/programa/programa/' + idPrograma, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        idprograma: idPrograma.value,
+                        info_programa: formularioEditarPrograma.elements['info_programa'].value,
+                        jefe_programa: formularioEditarPrograma.elements['jefe_programa'].value,
+                        facultad: formularioEditarPrograma.elements['facultad'].value,
+                    })
+                })
+                
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Programa actualizado con éxito:', data);
+                    window.location.href = '/programas';
+                })
+                .catch(error => console.error('Error:', error));
+            }
+            
         });
     </script>
 

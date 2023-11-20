@@ -1,28 +1,64 @@
 {% extends "base.html" %}
 
 {% block content %}
+<head>
     <style>
+        body {
+            background-color: #f8f8f8;
+            color: #333;
+            font-family: Arial, sans-serif;
+        }
+        
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
         table {
-            border-collapse: collapse;
-            width: 100%;
+            width: 90%; 
+            margin: 20px auto;
+            border-collapse: collapse; 
         }
-
+        
         th, td {
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 8px;
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
         }
-
+        
         th {
-            background-color: #f2f2f2;
+            font-weight: bold;
+            background-color:  #9a9a9a; 
+        }
+        
+        #filtroPrograma {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            
         }
 
         .accion-icono {
             cursor: pointer;
         }
     </style>
-</head>
+
 <body>
+
+    <div style="margin-bottom: 10px;">
+        <label for="filtroPrograma">Filtrar por Programa:</label>
+        <input type="text" id="filtroPrograma" oninput="filtrarProgramas()">
+    </div>
 
     <h1>Tabla de programas</h1>
 
@@ -30,7 +66,8 @@
         <thead>
             <tr>
                 <th>Programa</th>
-                <th>Facultad</th>
+                <th>ubicacion facultad</th>
+                <th>gefe</th>
                 <th>id</th>
                 <th>Acciones</th>
 
@@ -45,6 +82,27 @@
         </span>
     </div>
     <script>
+        
+        function filtrarProgramas() {
+            var input, filter, table, tbody, tr, td, i, txtValue;
+            input = document.getElementById("filtroPrograma");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("tablaProgramas");
+            tbody = table.getElementsByTagName("tbody")[0];
+            tr = tbody.getElementsByTagName("tr");
+        
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[0]; 
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
 
         function agregarPrograma() {
             window.location.href = '/agregarprogramas';    
@@ -72,10 +130,13 @@
                     var celdaFacultad = fila.insertCell(1);
                     celdaFacultad.textContent = programa.facultad;
 
-                    var celdaoid = fila.insertCell(2);
+                    var celdagefe = fila.insertCell(2);
+                    celdagefe.textContent = programa.jefe_programa;
+
+                    var celdaoid = fila.insertCell(3);
                     celdaoid.textContent = programa.idprograma;
 
-                    var celdaAcciones = fila.insertCell(3);
+                    var celdaAcciones = fila.insertCell(4);
                     var iconoLapiz = document.createElement('span');
                     iconoLapiz.innerHTML = '&#9998;';  // Lápiz
                     iconoLapiz.className = 'accion-icono';
@@ -120,5 +181,5 @@
 
         });
     </script>
-
+</body>
 {% endblock %}

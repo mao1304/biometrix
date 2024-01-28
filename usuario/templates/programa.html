@@ -1,57 +1,8 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block content %}
-<head>
-    <style>
-        body {
-            background-color: #f8f8f8;
-            color: #333;
-            font-family: Arial, sans-serif;
-        }
-        
-        .container {
-            width: 80%;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        
-        header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        
-        table {
-            width: 90%; 
-            margin: 20px auto;
-            border-collapse: collapse; 
-        }
-        
-        th, td {
-            padding: 12px;
-            text-align: center;
-            border: 1px solid #ddd;
-        }
-        
-        th {
-            font-weight: bold;
-            background-color:  #9a9a9a; 
-        }
-        
-        #filtroPrograma {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            
-        }
-
-        .accion-icono {
-            cursor: pointer;
-        }
-    </style>
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
 
 <body>
 
@@ -67,7 +18,7 @@
             <tr>
                 <th>Programa</th>
                 <th>ubicacion facultad</th>
-                <th>gefe</th>
+                <th>jefe</th>
                 <th>id</th>
                 <th>Acciones</th>
 

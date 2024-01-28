@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div style="margin-bottom: 10px;">
+        <label for="filtrousuario">Filtrar por usuario:</label>
+        <input type="text" id="filtrousuario" oninput="filtrarusuario()">
+    </div>
+
+    <h1>Tabla de usuario</h1>
+
+    <table id="tablausuario">
+        <thead>
+            <tr>
+                <th>nombre</th>
+                <th>apellido</th>
+                <th>staff</th>
+                <th>username</th>
+                <th>acciones</th>
+            </tr>
+        </thead>
+        <tbody id="cuerpoTablausuario"></tbody>
+    </table>
+
+    <div style="text-align: right; margin-top: 10px;">
+        <span style="cursor: pointer; color: green;" onclick="agregarusuario()">
+            &#43; Agregar usuario
+        </span>
+    </div>
+    <script>
+        function filtrarusuario() {
+            // ... (resto del código de filtrado)
+        }
+
+        function agregarusuario() {
+            window.location.href = '/agregarusuario';    
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            obtenerListausuario();
+
+            function obtenerListausuario() {
+                var cuerpoTablausuario = document.getElementById('cuerpoTablausuario');
+
+                fetch('http://127.0.0.1:8000//ProfList/usuarioP/')  
+                    .then(response => response.json())
+                    .then(data => mostrarListausuario(data, cuerpoTablausuario))
+                    .catch(error => console.error('Error:', error));
+            }
+
+            function mostrarListausuario(usuarios) {
+                var cuerpoTablausuario = document.getElementById('cuerpoTablausuario');
+            
+                usuarios.forEach(function (usuario) {
+                    var fila = cuerpoTablausuario.insertRow();
+            
+                    var celdausuario = fila.insertCell(0);
+                    celdausuario.textContent = usuario.first_name;
+            
+                    var celdaFacultad = fila.insertCell(1);
+                    celdaFacultad.textContent = usuario.last_name;
+            
+                    var celdagefe = fila.insertCell(2);
+                    celdagefe.textContent = usuario.is_staff;
+            
+                    var celdaoid = fila.insertCell(3);
+                    celdaoid.textContent = usuario.username;
+            
+                    var celdaAcciones = fila.insertCell(4);  // Agrega una celda para acciones
+                    var iconoLapiz = document.createElement('span');
+                    iconoLapiz.innerHTML = '&#9998;';  // Lápiz
+                    iconoLapiz.className = 'accion-icono';
+                    iconoLapiz.onclick = function() {
+                        editarUsuario(usuario.idusuario);
+                    };
+            
+                    var iconoPapelera = document.createElement('span');
+                    iconoPapelera.innerHTML = '&#128465;';  
+                    iconoPapelera.className = 'accion-icono';
+                    iconoPapelera.onclick = function() {
+                        var confirmacion = confirm('¿Estás seguro de que deseas eliminar el usuario con ID ' + usuario.idusuario + '?');
+                        
+                        if (confirmacion) {
+                            eliminarUsuario(usuario.idusuario);
+                        } else {
+                            // nada
+                        }
+                    };
+            
+                    celdaAcciones.appendChild(iconoLapiz);
+                    celdaAcciones.appendChild(iconoPapelera);
+                });
+            }
+            }
+
+        );
+    </script>
+
+{% endblock %}

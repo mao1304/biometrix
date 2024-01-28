@@ -8,16 +8,16 @@
     <title>Editar Programa</title>
     <link rel="stylesheet" href="{% static 'css/forms.css' %}">
 </head>
+
 <body>
 
-    <h1>Editar Programa {{ idprogrma }}</h1>
+    <h1>Editar Programa {{ idprograma }}</h1>
 
-    <form id="formularioEditarPrograma">
-        {% csrf_token %}
+    <form id="formularioEditarPrograma" method="post">
         {{ form.as_p }}
         <div class="button-container">
-            <button type="button" id="botonGuardarCambios">Guardar cambios</button>
-            <button type="button"id="botonCancelar" class="cancel-button">Cancelar</button>
+            <button type="submit" id="botonGuardarCambios">Guardar cambios</button>
+            <button type="button" id="botonCancelar" class="cancel-button">Cancelar</button>
         </div>
     </form>
 
@@ -26,7 +26,7 @@
             obtenerDetallesPrograma();
 
             function obtenerDetallesPrograma() {
-                var urlParams = new URLSearchParams(window.location.search);             
+                var urlParams = new URLSearchParams(window.location.search);
                 var idPrograma = urlParams.get('idprograma');
 
                 if (idPrograma) {
@@ -48,43 +48,44 @@
             }
 
             var botonGuardarCambios = document.getElementById('botonGuardarCambios');
-            botonGuardarCambios.addEventListener('click', function() {
+            botonGuardarCambios.addEventListener('click', function () {
                 guardarCambiosPrograma();
             });
 
             var botonCancelar = document.getElementById('botonCancelar');
-            botonCancelar.addEventListener('click', function() {
-                window.history.back();
+            botonCancelar.addEventListener('click', function () {
+                window.location.href = '/programas';
             });
 
             function guardarCambiosPrograma() {
                 var formularioEditarPrograma = document.getElementById('formularioEditarPrograma');
-                var urlParams = new URLSearchParams(window.location.search);  
+                var urlParams = new URLSearchParams(window.location.search);
                 var idPrograma = urlParams.get('idprograma');
-            
-                fetch('http://127.0.0.1:8000/curso/programa/programa/' + idPrograma, {
+
+                var formData = new FormData(formularioEditarPrograma);
+                console.log(formData);
+                fetch('http://127.0.0.1:8000/curso/programa/programa/' + idPrograma + '/', {
                     method: 'PUT',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        idprograma: idPrograma.value,
-                        info_programa: formularioEditarPrograma.elements['info_programa'].value,
-                        jefe_programa: formularioEditarPrograma.elements['jefe_programa'].value,
-                        facultad: formularioEditarPrograma.elements['facultad'].value,
+                        idprograma: number(idPrograma),
+                        info_programa: formData.get('info_programa'),
+                        facultad: formData.get('facultad'),
+                        jefe_programa: formData.get('jefe_programa'),
+                    }),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Programa actualizado con éxito:', data);
                     })
-                })
-                
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Programa actualizado con éxito:', data);
-                    window.location.href = '/programas';
-                })
-                .catch(error => console.error('Error:', error));
+                    .catch(error => console.error('Error:', error));
             }
-            
+
         });
     </script>
 
 </body>
+
 </html>

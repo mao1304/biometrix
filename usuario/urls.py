@@ -1,7 +1,7 @@
 from django.urls import path,include
 from rest_framework import routers
 from usuario import views
-from curso.views import ProgramaView
+from curso.views import programaView
  
 router_Prof = routers.DefaultRouter()
 router_Prof.register(r'usuarioP', views.UserView, 'prof')
@@ -9,6 +9,8 @@ router_Prof.register(r'usuarioP', views.UserView, 'prof')
 router_admin = routers.DefaultRouter()
 router_admin.register(r'usuarioA', views.AdminView, 'admin')
 
+router_classXprof = routers.DefaultRouter()
+router_classXprof.register(r'classXprof', views.classXprof, 'classXprof')
 urlpatterns = [
     #API views
     path('signUpAdmin/', views.SignUpAdminAPI.as_view(), name='signUpAdmin'),
@@ -16,6 +18,7 @@ urlpatterns = [
     path('SignInAPI/', views.SignInAPI.as_view(), name='SignInAPI'),
     path('logout/', views.SignOutAPI.as_view(), name='logoutAPI'),
     path('ProfList/',include(router_Prof.urls)),
+    path('classXprof/',include(router_classXprof.urls)),
     path('AdminList/',include(router_admin.urls)),
     
     #web views 
@@ -40,9 +43,9 @@ urlpatterns = [
     path('editarclase/', views.editarclase, name='editarclase'),
     path('agregarclase/', views.agregarclase, name='agregarclase'),
     #view crud usuarios
-    path('usuarios/',views.aula, name='aula'),
-    path('editaraula/', views.editaraula, name='editaraula'),
-    path('agregaraula/', views.agregaraula, name='agregaraula'),
+    path('usuarios/',views.usuario, name='usuario'),
+    path('editarusuario/', views.editarusuario, name='editarusuario'),
+    path('agregarusuario/', views.agregarusuario, name='agregarusuario'),
     
     path('consultarlista/', views.consultarClasesProf , name='consultarClasesProf'),
     

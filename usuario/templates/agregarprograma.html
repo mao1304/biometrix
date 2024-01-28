@@ -1,9 +1,10 @@
-<!-- agregarprograma.html -->
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/forms.css' %}">
     <title>Agregar Programa</title>
 </head>
 <body>
@@ -13,10 +14,12 @@
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Guardar Programa</button>
-    </form>
 
-    <button type="button" id="botonCancelar">Cancelar</button>
+        <div class="button-container">
+            <button type="submit" id="botonGuardarCambios">Guardar cambios</button>
+            <button type="button"id="botonCancelar" class="cancel-button">Cancelar</button>
+        </div>
+    </form>
 
     <script>
         var botonCancelar = document.getElementById('botonCancelar');

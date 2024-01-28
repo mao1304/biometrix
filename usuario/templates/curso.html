@@ -1,31 +1,17 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block content %}
-    <style>
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        th, td {
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 8px;
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
-
-        .accion-icono {
-            cursor: pointer;
-        }
-    </style>
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
 
-    <h1>Tabla de curso</h1>
+    <div style="margin-bottom: 10px;">
+        <label for="filtrocurso">Filtrar por curso:</label>
+        <input type="text" id="filtrocurso" oninput="filtrarcurso()">
+    </div>
 
+    <h1>Tabla de curso</h1>
+    
     <table id="tablacurso">
         <thead>
             <tr>
@@ -34,7 +20,7 @@
                 <th>descripcion</th>
                 <th>ciclo</th>
                 <th>grupo</th>
-                <th>programa</th>
+                <th>curso</th>
                 <th>acciones</th>
             </tr>
         </thead>
@@ -47,6 +33,26 @@
         </span>
     </div>
     <script>
+        function filtrarcurso() {
+            var input, filter, table, tbody, tr, td, i, txtValue;
+            input = document.getElementById("filtrocurso");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("tablacurso");
+            tbody = table.getElementsByTagName("tbody")[0]; 
+            tr = tbody.getElementsByTagName("tr");
+        
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[2];
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
 
         function agregarcurso() {
             window.location.href = '/agregarcurso';    
@@ -83,8 +89,8 @@
                     var celdaGrupo = fila.insertCell(4);
                     celdaGrupo.textContent = curso.grupo;
                     
-                    var celdaPrograma = fila.insertCell(5);
-                    celdaPrograma.textContent = curso.programa;
+                    var celdacurso = fila.insertCell(5);
+                    celdacurso.textContent = curso.curso;
 
                     var celdaAcciones = fila.insertCell(6);
                     var iconoLapiz = document.createElement('span');

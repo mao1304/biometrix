@@ -4,18 +4,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agregar aula</title>
     <link rel="stylesheet" href="{% static 'css/forms.css' %}">
+    <title>Agregar profesor</title>
 </head>
 <body>
 
-    <h1>Agregar aula</h1>
+    <h1>Agregar profesor</h1>
 
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
         <div class="button-container">
-            <button type="button" id="botonGuardarCambios">Guardar cambios</button>
+            <button type="submit" id="botonGuardarCambios">Guardar cambios</button>
             <button type="button"id="botonCancelar" class="cancel-button">Cancelar</button>
         </div>
     </form>
@@ -29,7 +29,7 @@
         {% if mensaje %}
             alert("{{ mensaje }}");
             {% if not form.errors %}
-                window.location.href = '/aula';
+                window.location.href = '/usuario';
             {% endif %}
         {% endif %}
     </script>

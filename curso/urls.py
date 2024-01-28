@@ -17,7 +17,7 @@ router_curso = routers.DefaultRouter()
 router_curso.register(r'curso', views.cursoView, 'curso')
 
 urlpatterns = [
-    path('clase/',include((router_clase.urls))),
+    path('clase/',include(router_clase.urls)),
     path('aula/',include(router_aula.urls)),
     path('programa/',include(router_programa.urls)),
     path('curso/',include(router_curso.urls)),

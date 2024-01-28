@@ -1,10 +1,5 @@
-
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="{% static 'css/styleNavbar.css' %}">
 </head>
 <body>
@@ -16,7 +11,8 @@
       <li><a href="{% url 'curso' %}">curso</a></li>
       <li><a href="{% url 'aula' %}">aula</a></li>
       <li><a href="{% url 'clase' %}">clases</a></li>
-      <li><a href="{% url 'generarTabla' %}">consulta</a></li>
+      <li><a href="{% url 'usuario' %}">usuarios</a></li>
+      <li><a href="{% url 'generarTabla' %}">tabla general</a></li>
       <li><a href="{% url 'signout' %}">logout</a></li>
       {% endif %}
     </ul>

@@ -1,8 +1,10 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/forms.css' %}">
     <title>Editar aula</title>
 </head>
 <body>
@@ -12,10 +14,11 @@
     <form id="formularioEditaraula">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Guardar Cambios</button>
+        <div class="button-container">
+            <button type="button" id="botonGuardarCambios">Guardar cambios</button>
+            <button type="button"id="botonCancelar" class="cancel-button">Cancelar</button>
+        </div>
     </form>
-
-    <button type="button" id="botonCancelar">Cancelar</button>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -39,7 +42,7 @@
                 var formularioEditaraula = document.getElementById('formularioEditaraula');
 
                 formularioEditaraula.elements['idaula'].value = aula.idaula;
-                formularioEditaraula.elements['numero'].value = aula.numero;
+                formularioEditaraula.elements['descripcion'].value = aula.descripcion;
             }
 
             var botonCancelar = document.getElementById('botonCancelar');

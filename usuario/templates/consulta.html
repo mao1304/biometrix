@@ -1,36 +1,20 @@
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="es">
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resultados de la Consulta</title>
-    <link rel="stylesheet" href="{% static 'styles.css' %}">
 </head>
-<style>
-    table {
-        border-collapse: collapse;
-        width: 100%;
-    }
 
-    th, td {
-        border: 1px solid #dddddd;
-        text-align: left;
-        padding: 8px;
-    }
-
-    th {
-        background-color: #f2f2f2;
-    }
-
-    .accion-icono {
-        cursor: pointer;
-    }
-</style>
 <body>
+    <div style="margin-bottom: 10px;">
+        <label for="filtroclase">Filtrar por profesor:</label>
+        <input type="text" id="filtroclase" oninput="filtrarclases()">
+    </div>
+
     <h1>Resultados de la Consulta</h1>
 
-    <table>
+    <table id="tablaResultados">
         <thead>
             <tr>
                 <th>Ciclo</th>
@@ -44,6 +28,8 @@
                 <th>Aula</th>
                 <th>Número de Clases Vistas</th>
                 <th>Número de Aula</th>
+                <th>Profesor</th>
+                <th>Firma</th>
             </tr>
         </thead>
         <tbody>
@@ -60,9 +46,44 @@
                     <td>{{ resultado.8 }}</td>
                     <td>{{ resultado.9 }}</td>
                     <td>{{ resultado.10 }}</td>
+                    <td>{{ resultado.11 }}</td>
+                    <td>
+                        {% if resultado.12 %}
+                            <span style="color: green;">&#10004;</span>
+                        {% else %}
+                            <span style="color: red;">&#10008;</span>
+                        {% endif %}
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
+
+    <script>
+        function filtrarclases() {
+            var input, filter, table, tbody, tr, td, i, txtValue;
+            input = document.getElementById("filtroclase");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("tablaResultados");
+            tbody = table.getElementsByTagName("tbody")[0];
+            tr = tbody.getElementsByTagName("tr");
+
+            for (i = 0; i < tr.length; i++) {
+                var validacionCell = tr[i].getElementsByTagName("td")[12];
+                var profesorCell = tr[i].getElementsByTagName("td")[11];
+
+                if (validacionCell && profesorCell) {
+                    var validacion = validacionCell.textContent || validacionCell.innerText;
+                    var profesor = profesorCell.textContent || profesorCell.innerText;
+
+                    if (validacion.toUpperCase().indexOf(filter) > -1 || profesor.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+    </script>
 </body>
-</html>
+{% endblock %}

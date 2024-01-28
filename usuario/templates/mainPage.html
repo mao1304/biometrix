@@ -1,8 +1,33 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block content %}
-<a> hola mundo</a>
 
-Lorem ipsum dolor sit amet.
+<style>
+.container {
+    text-align: center;
+    width: 600px;
+}
+
+.img-homepage img {
+    width: 150px; 
+    height: auto; 
+    margin: 15px auto;
+    border-radius: 10%;
+}
+p {
+    margin: 15px auto;
+    text-align: justify;
+}
+</style>
+
+<div class="container">
+    <h1>¿Qué es BiometrixUCC?</h1>
+    
+    <p>BiometrixUCC utiliza Django Rest Framework para el backend, que es la parte encargada de gestionar la lógica de la aplicación. Django Rest Framework facilita la creación de APIs para la comunicación entre el frontend y el backend. Por otro lado, el frontend está desarrollado con React Native, lo que significa que la aplicación es multiplataforma y puede ejecutarse en dispositivos iOS y Android. La autenticación se realiza mediante la validación de la huella dactilar del celular, lo que proporciona un nivel adicional de seguridad. En resumen, BiometrixUCC ofrece una solución integral para el control de asistencia de docentes, aprovechando tecnologías modernas y garantizando la autenticación a través de la biometría.</p>
+    <h1>Logo</h1>
+    <div class="img-homepage">
+        <img src="{% static 'images/logo-biometrixUCC.png' %}" alt="BiometrixUCC Logo">
+    </div>
+</div>
 
 {% endblock %}

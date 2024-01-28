@@ -1,28 +1,13 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block content %}
-    <style>
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        th, td {
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 8px;
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
-
-        .accion-icono {
-            cursor: pointer;
-        }
-    </style>
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
+    <div style="margin-bottom: 10px;">
+        <label for="filtroclase">Filtrar por clase:</label>
+        <input type="text" id="filtroclase" oninput="filtrarclases()">
+    </div>
 
     <h1>Tabla de clases</h1>
 
@@ -35,6 +20,9 @@
                 <th>curso</th>
                 <th>aula</th>
                 <th>profesor</th>
+                <th>firmado</th>
+                <th>acciones</th>
+
             </tr>
         </thead>
         <tbody id="cuerpoTablaclases"></tbody>
@@ -46,6 +34,30 @@
         </span>
     </div>
     <script>
+        function filtrarclases() {
+            var input, filter, table, tbody, tr, td, i, txtValue;
+            input = document.getElementById("filtroclase");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("tablaclases");
+            tbody = table.getElementsByTagName("tbody")[0];
+            tr = tbody.getElementsByTagName("tr");
+        
+            for (i = 0; i < tr.length; i++) {
+                var validacionCell = tr[i].getElementsByTagName("td")[6];
+                var profesorCell = tr[i].getElementsByTagName("td")[5];
+        
+                if (validacionCell && profesorCell) {
+                    var validacion = validacionCell.textContent || validacionCell.innerText;
+                    var profesor = profesorCell.textContent || profesorCell.innerText;
+        
+                    if (validacion.toUpperCase().indexOf(filter) > -1 || profesor.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
 
         function formatearFecha(fecha) {
             const options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' };
@@ -90,7 +102,10 @@
                     var profesor = fila.insertCell(5);
                     profesor.textContent = clases.profesor_ID;
 
-                    var celdaAcciones = fila.insertCell(6);
+                    var estado = fila.insertCell(6);
+                    estado.textContent = clases.validacion;
+
+                    var celdaAcciones = fila.insertCell(7);
                     var iconoLapiz = document.createElement('span');
                     iconoLapiz.innerHTML = '&#9998;';  // Lápiz
                     iconoLapiz.className = 'accion-icono';
@@ -111,7 +126,18 @@
                             // nada
                         }
                     };
+                    var iconoEstado = document.createElement('span');
+                    iconoEstado.className = 'accion-icono';
+            
 
+                    if (clases.validacion) {
+                        iconoEstado.innerHTML = '&#10004;';  
+                        iconoEstado.style.color = 'green';
+                    } else {
+                        iconoEstado.innerHTML = '&#10008;';  
+                    }
+            
+                    estado.appendChild(iconoEstado);
                     celdaAcciones.appendChild(iconoLapiz);
                     celdaAcciones.appendChild(iconoPapelera);
                 });

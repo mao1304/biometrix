@@ -16,14 +16,34 @@ from rest_framework.response import Response
 from .serializer import UserSerializer,AdminSerializer, LoginSerializer
 from .models import NewUser
 from .forms import AdminUserForm, NewUserForm,LoginUserForm
-
+from usuario.forms import NewUserForm
 from curso.forms import createPrograma,updateProgrma,createCurso,createAula,creatClase
 @method_decorator(csrf_exempt, name='dispatch')  
 def generarTabla(request):
     with connection.cursor() as cursor:
-        cursor.execute("SELECT curso.ciclo as ciclo,clase.curso_id,programa.info_programa,curso.grupo, curso.descripcion, DATE_FORMAT(hora_inicio, '%H:%i') AS 'hora de inicio',DATE_FORMAT(hora_fin, '%H:%i') AS 'hora de fin', clase.tema, clase.aula_id as aula, curso.num_clases_vistas as 'num clases vistas', aula.descripcion as Aula,clase.profesor_ID_id as profesor from curso_clase as clase inner join curso_curso as curso on clase.curso_id = curso.id_curso inner join curso_programa as programa on curso.programa_id = programa.idprograma inner join curso_aula as aula on aula.idaula = clase.aula_id;")
+        cursor.execute("""
+            SELECT 
+                curso.ciclo as ciclo,
+                clase.curso_id,
+                programa.info_programa,
+                curso.grupo,
+                curso.descripcion,
+                DATE_FORMAT(hora_inicio, '%H:%i') AS hora_inicio,
+                DATE_FORMAT(hora_fin, '%H:%i') AS hora_fin,
+                clase.tema,
+                clase.aula_id as aula,
+                curso.num_clases_vistas as num_clases_vistas,
+                aula.descripcion as Aula,
+                clase.profesor_ID_id as profesor,
+                clase.validacion as firma
+            FROM curso_clase as clase
+            INNER JOIN curso_curso as curso ON clase.curso_id = curso.id_curso
+            INNER JOIN curso_programa as programa ON curso.programa_id = programa.idprograma
+            INNER JOIN curso_aula as aula ON aula.idaula = clase.aula_id
+        """)
         resultados = cursor.fetchall()
     return render(request, 'consulta.html', {'resultados': resultados})
+
 @method_decorator(csrf_exempt, name='dispatch')  
 def consultarClasesProf(request, idprof):
     with connection.cursor() as cursor:
@@ -39,12 +59,19 @@ def consultarClasesProf(request, idprof):
 class ReadOnlyUserPermission(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.method in ['GET', 'PUT', 'PATCH', 'DELETE']  
+    
 class UserView(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     def get_queryset(self):
         return NewUser.objects.filter(is_staff=False)  
     permission_classes = [ReadOnlyUserPermission]
 
+class AdminView(viewsets.ModelViewSet):
+    serializer_class = AdminSerializer
+    def get_queryset(self):
+        return NewUser.objects.filter(is_staff=True)  
+    permission_classes = [ReadOnlyUserPermission]
+    
 class AdminView(viewsets.ModelViewSet):
     serializer_class = AdminSerializer
     def get_queryset(self):
@@ -272,3 +299,38 @@ def agregarclase(request):
             return render(request, 'aulaCrear.html', {'form': creatClase(), 'mensaje': mensaje})
         else:
             return render(request, 'aulaCrear.html', {'form': form})
+        
+#views de el crud de usuario 
+def usuario (request):
+    if request.method == 'GET':
+        return render(request, 'usuario.html')
+@method_decorator(csrf_exempt, name='dispatch')  
+def editarusuario(request):
+    id = request.GET.get('id')
+    return render(request, 'claseEditar.html', {'id': id, 'form': NewUserForm})
+@method_decorator(csrf_exempt, name='dispatch')  
+def agregarusuario(request):
+    if request.method == 'GET':
+        form = NewUserForm()
+        return render(request, 'usuarioCrear.html', {'form': form})
+    
+    elif request.method == 'POST':
+        form = NewUserForm(request.POST)
+        if form.is_valid():
+            form.save()
+            mensaje = 'Programa creado con éxito.'
+            return render(request, 'aulaCrear.html', {'form': NewUserForm(), 'mensaje': mensaje})
+        else:
+            return render(request, 'aulaCrear.html', {'form': form})
+        
+from curso.serializer import ClaseSerializer   
+from curso.models import Clase   
+
+class classXprof(viewsets.ModelViewSet):
+    serializer_class = ClaseSerializer
+    def get_queryset(self):
+        profesor_id = self.request.query_params.get('profesor_ID', None)
+        print(profesor_id)
+        return Clase.objects.filter( profesor_ID=profesor_id)  
+    permission_classes = [ReadOnlyUserPermission]
+    

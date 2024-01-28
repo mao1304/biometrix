@@ -1,8 +1,10 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/forms.css' %}">
     <title>Agregar clase</title>
 </head>
 <body>
@@ -12,10 +14,11 @@
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Guardar clase</button>
+        <div class="button-container">
+            <button type="button" id="botonGuardarCambios">Guardar cambios</button>
+            <button type="button"id="botonCancelar" class="cancel-button">Cancelar</button>
+        </div>
     </form>
-
-    <button type="button" id="botonCancelar">Cancelar</button>
 
     <script>
         var botonCancelar = document.getElementById('botonCancelar');

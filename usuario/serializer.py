@@ -9,7 +9,7 @@ class AdminSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = NewUser
-        fields= ('username', 'password', 'first_name', 'last_name','huella', 'is_staff',) 
+        fields= ('username', 'password', 'first_name', 'last_name', 'is_staff',) 
         
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
